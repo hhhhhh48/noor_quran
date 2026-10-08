@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/services/audio_service.dart';
 import '../../core/services/share_service.dart';
 import '../../core/services/storage_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_text.dart';
+import '../../core/widgets/audio_bar.dart';
 import '../../data/database/tafsir_repository.dart';
 import '../../data/database/translation_repository.dart';
+import '../../data/models/reciter.dart';
 import '../../data/models/translation.dart';
 
 class ReaderScreen extends StatelessWidget {
@@ -40,6 +43,12 @@ class ReaderScreen extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
             ),
             actions: [
+              IconButton(
+                icon: Icon(Icons.record_voice_over_rounded,
+                  color: isDark ? AppColors.goldSoft : AppColors.emerald),
+                tooltip: 'اختر القارئ',
+                onPressed: () => _showReciterPicker(context),
+              ),
               IconButton(
                 icon: Icon(Icons.translate_rounded,
                   color: isDark ? AppColors.goldSoft : AppColors.emerald),
@@ -94,6 +103,7 @@ class ReaderScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: AudioBar(surahName: surah.name),
     );
   }
 
@@ -113,6 +123,68 @@ class ReaderScreen extends StatelessWidget {
           color: isDark ? AppColors.goldSoft : Colors.white, height: 1.8)),
     ),
   );
+
+  void _showReciterPicker(BuildContext context) {
+    final audio = context.read<AudioService>();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.6,
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.nightCard : AppColors.creamCard,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                width: 40, height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                  borderRadius: BorderRadius.circular(2)),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text('اختر القارئ',
+                  style: AppText.poppins(fontSize: 20, fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textLight : AppColors.textPrimary)),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: kReciters.length,
+                  itemBuilder: (_, i) {
+                    final r = kReciters[i];
+                    final cur = r.folder == audio.reciter.folder;
+                    return ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                      title: Text(r.arabicName,
+                        style: AppText.poppins(fontSize: 16,
+                          fontWeight: cur ? FontWeight.bold : FontWeight.normal,
+                          color: isDark ? AppColors.textLight : AppColors.textPrimary)),
+                      subtitle: Text(r.englishName,
+                        style: AppText.poppins(fontSize: 12,
+                          color: isDark ? AppColors.textMuted : AppColors.textSecondary)),
+                      trailing: cur
+                          ? const Icon(Icons.check_circle, color: AppColors.emerald)
+                          : null,
+                      onTap: () {
+                        audio.setReciter(r);
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   void _showLangPicker(BuildContext context, TranslationRepository repo) {
     showModalBottomSheet(
@@ -247,8 +319,7 @@ class _AyahCardState extends State<_AyahCard> {
       backgroundColor: Colors.transparent,
       builder: (_) => StatefulBuilder(
         builder: (ctx, setSt) {
-          final tafsir = repo.getTafsir(
-            widget.surahId, widget.ayahNumber, lang: selectedLang);
+          final tafsir = repo.getTafsir(widget.surahId, widget.ayahNumber, lang: selectedLang);
           return Container(
             height: MediaQuery.of(context).size.height * 0.85,
             decoration: BoxDecoration(
@@ -380,13 +451,23 @@ class _AyahCardState extends State<_AyahCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
+    final audio = context.watch<AudioService>();
+    final isCurrent = audio.currentSurah == widget.surahId &&
+        audio.currentAyah == widget.ayahNumber;
+    final isPlayingThis = isCurrent && audio.isPlaying;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark ? AppColors.nightCard : AppColors.creamCard,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.gold.withValues(alpha: 0.15)),
+        border: Border.all(
+          color: isCurrent
+              ? AppColors.gold
+              : AppColors.gold.withValues(alpha: 0.15),
+          width: isCurrent ? 1.5 : 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -423,6 +504,21 @@ class _AyahCardState extends State<_AyahCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              _btn(
+                isPlayingThis ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                Icons.play_arrow_rounded,
+                isCurrent,
+                () {
+                  if (isPlayingThis) {
+                    audio.pause();
+                  } else if (isCurrent) {
+                    audio.resume();
+                  } else {
+                    audio.playAyah(widget.surahId, widget.ayahNumber);
+                  }
+                },
+              ),
+              const SizedBox(width: 8),
               _btn(Icons.book_rounded, Icons.book_rounded, false,
                 () => _showTafsir(context)),
               const SizedBox(width: 8),

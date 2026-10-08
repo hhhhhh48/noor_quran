@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'core/services/audio_service.dart';
 import 'core/theme/app_text.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
@@ -25,6 +26,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider<TranslationRepository>.value(value: transRepo),
+        ChangeNotifierProvider<AudioService>.value(value: AudioService.instance),
         Provider<QuranRepository>.value(value: quranRepo),
         Provider<TafsirRepository>.value(value: tafsirRepo),
       ],
