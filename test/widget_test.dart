@@ -3,6 +3,6 @@ import 'package:quran_kareem/main.dart';
 
 void main() {
   test('App compiles', () {
-    expect(NoorQuranApp, isNotNull);
+    expect(QuranKareemApp, isNotNull);
   });
 }

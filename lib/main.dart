@@ -3,25 +3,32 @@ import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'data/database/quran_repository.dart';
+import 'data/database/translation_repository.dart';
 import 'features/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final repo = QuranRepository();
-  await repo.load();
+
+  final quranRepo = QuranRepository();
+  await quranRepo.load();
+
+  final transRepo = TranslationRepository();
+  await transRepo.loadLanguage('en');
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        Provider<QuranRepository>.value(value: repo),
+        Provider<QuranRepository>.value(value: quranRepo),
+        ChangeNotifierProvider<TranslationRepository>.value(value: transRepo),
       ],
-      child: const NoorQuranApp(),
+      child: const QuranKareemApp(),
     ),
   );
 }
 
-class NoorQuranApp extends StatelessWidget {
-  const NoorQuranApp({super.key});
+class QuranKareemApp extends StatelessWidget {
+  const QuranKareemApp({super.key});
 
   @override
   Widget build(BuildContext context) {
