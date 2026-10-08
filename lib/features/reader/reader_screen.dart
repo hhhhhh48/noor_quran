@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/services/share_service.dart';
+import '../../core/services/storage_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_text.dart';
@@ -20,6 +21,7 @@ class ReaderScreen extends StatelessWidget {
       orElse: () => kSupportedLanguages[1],
     );
     final isRtl = langInfo.direction == 'rtl';
+    StorageService.setLastRead(surah.id, 1, surah.name);
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.night : AppColors.cream,
@@ -32,26 +34,19 @@ class ReaderScreen extends StatelessWidget {
             elevation: 0,
             expandedHeight: 140,
             leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_rounded,
-                color: isDark ? AppColors.goldSoft : AppColors.emerald,
-              ),
+              icon: Icon(Icons.arrow_back_rounded,
+                color: isDark ? AppColors.goldSoft : AppColors.emerald),
               onPressed: () => Navigator.pop(context),
             ),
             actions: [
               IconButton(
-                icon: Icon(
-                  Icons.translate_rounded,
-                  color: isDark ? AppColors.goldSoft : AppColors.emerald,
-                ),
-                tooltip: langInfo.englishName,
-                onPressed: () => _showLanguagePicker(context, transRepo),
+                icon: Icon(Icons.translate_rounded,
+                  color: isDark ? AppColors.goldSoft : AppColors.emerald),
+                onPressed: () => _showLangPicker(context, transRepo),
               ),
               IconButton(
-                icon: Icon(
-                  Icons.share_rounded,
-                  color: isDark ? AppColors.goldSoft : AppColors.emerald,
-                ),
+                icon: Icon(Icons.share_rounded,
+                  color: isDark ? AppColors.goldSoft : AppColors.emerald),
                 onPressed: () => ShareService.shareApp(),
               ),
             ],
@@ -61,34 +56,24 @@ class ReaderScreen extends StatelessWidget {
               title: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(
-                    surah.name,
-                    style: AppText.amiri(
-                      fontSize: 22,
+                  Text(surah.name,
+                    style: AppText.amiri(fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AppColors.textLight
-                          : AppColors.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    '${surah.totalVerses} آيات',
-                    style: AppText.poppins(
-                      fontSize: 11,
+                          : AppColors.textPrimary)),
+                  Text('${surah.totalVerses} آيات',
+                    style: AppText.poppins(fontSize: 11,
                       color: isDark
                           ? AppColors.textMuted
-                          : AppColors.textSecondary,
-                    ),
-                  ),
+                          : AppColors.textSecondary)),
                 ],
               ),
             ),
           ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
-            sliver: SliverToBoxAdapter(
-              child: _buildBismillah(isDark),
-            ),
+            sliver: SliverToBoxAdapter(child: _bismillah(isDark)),
           ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
@@ -96,15 +81,16 @@ class ReaderScreen extends StatelessWidget {
               itemCount: surah.ayahs.length,
               itemBuilder: (context, i) {
                 final a = surah.ayahs[i];
-                final translation = transRepo.verse(surah.id, a.number);
+                final t = transRepo.verse(surah.id, a.number);
                 return _AyahCard(
                   ayahText: a.text,
                   ayahNumber: a.number,
-                  translation: translation,
+                  translation: t,
                   isRtl: isRtl,
                   isDark: isDark,
+                  surahId: surah.id,
                   surahName: surah.name,
-                  languageName: langInfo.englishName,
+                  langName: langInfo.englishName,
                 );
               },
             ),
@@ -114,34 +100,24 @@ class ReaderScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBismillah(bool isDark) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-      decoration: BoxDecoration(
-        gradient: isDark
-            ? const LinearGradient(
-                colors: [Color(0xFF1A2E25), Color(0xFF12201A)],
-              )
-            : AppGradients.heroEmerald,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Center(
-        child: Text(
-          'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-          textAlign: TextAlign.center,
-          style: AppText.amiri(
-            fontSize: 24,
-            color: isDark ? AppColors.goldSoft : Colors.white,
-            height: 1.8,
-          ),
-        ),
-      ),
-    );
-  }
+  Widget _bismillah(bool isDark) => Container(
+    margin: const EdgeInsets.only(bottom: 16),
+    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+    decoration: BoxDecoration(
+      gradient: isDark
+          ? const LinearGradient(colors: [Color(0xFF1A2E25), Color(0xFF12201A)])
+          : AppGradients.heroEmerald,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Center(
+      child: Text('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+        textAlign: TextAlign.center,
+        style: AppText.amiri(fontSize: 24,
+          color: isDark ? AppColors.goldSoft : Colors.white, height: 1.8)),
+    ),
+  );
 
-  void _showLanguagePicker(
-      BuildContext context, TranslationRepository repo) {
+  void _showLangPicker(BuildContext context, TranslationRepository repo) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -152,86 +128,56 @@ class ReaderScreen extends StatelessWidget {
           height: MediaQuery.of(context).size.height * 0.7,
           decoration: BoxDecoration(
             color: isDark ? AppColors.nightCard : AppColors.creamCard,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(28),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: Column(
             children: [
               Container(
                 margin: const EdgeInsets.only(top: 12, bottom: 8),
-                width: 40,
-                height: 4,
+                width: 40, height: 4,
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColors.textMuted
-                      : AppColors.textSecondary,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+                  color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                  borderRadius: BorderRadius.circular(2)),
               ),
               Padding(
                 padding: const EdgeInsets.all(20),
-                child: Text(
-                  'اختر لغة الترجمة',
-                  style: AppText.poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: isDark
-                        ? AppColors.textLight
-                        : AppColors.textPrimary,
-                  ),
-                ),
+                child: Text('اختر لغة الترجمة',
+                  style: AppText.poppins(fontSize: 20, fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textLight : AppColors.textPrimary)),
               ),
               Expanded(
                 child: ListView.builder(
                   itemCount: kSupportedLanguages.length,
                   itemBuilder: (_, i) {
-                    final lang = kSupportedLanguages[i];
-                    final isCurrent = lang.code == repo.currentLanguage;
+                    final l = kSupportedLanguages[i];
+                    final cur = l.code == repo.currentLanguage;
                     return ListTile(
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 4,
-                      ),
-                      title: Text(
-                        lang.nativeName,
-                        style: AppText.poppins(
-                          fontSize: 16,
-                          fontWeight: isCurrent
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                        horizontal: 24, vertical: 4),
+                      title: Text(l.nativeName,
+                        style: AppText.poppins(fontSize: 16,
+                          fontWeight: cur ? FontWeight.bold : FontWeight.normal,
                           color: isDark
                               ? AppColors.textLight
-                              : AppColors.textPrimary,
-                        ),
-                      ),
-                      subtitle: Text(
-                        lang.englishName,
-                        style: AppText.poppins(
-                          fontSize: 12,
+                              : AppColors.textPrimary)),
+                      subtitle: Text(l.englishName,
+                        style: AppText.poppins(fontSize: 12,
                           color: isDark
                               ? AppColors.textMuted
-                              : AppColors.textSecondary,
-                        ),
-                      ),
-                      trailing: isCurrent
-                          ? const Icon(
-                              Icons.check_circle,
-                              color: AppColors.emerald,
-                            )
+                              : AppColors.textSecondary)),
+                      trailing: cur
+                          ? const Icon(Icons.check_circle,
+                              color: AppColors.emerald)
                           : null,
                       onTap: () async {
-                        final ok = await repo.loadLanguage(lang.code);
+                        final ok = await repo.loadLanguage(l.code);
                         if (context.mounted) {
                           Navigator.pop(context);
                           if (!ok) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'الترجمة ${lang.nativeName} غير متوفرة',
-                                  style: AppText.poppins(),
-                                ),
-                              ),
+                              SnackBar(content: Text(
+                                'الترجمة ${l.nativeName} غير متوفرة',
+                                style: AppText.poppins())),
                             );
                           }
                         }
@@ -248,14 +194,15 @@ class ReaderScreen extends StatelessWidget {
   }
 }
 
-class _AyahCard extends StatelessWidget {
+class _AyahCard extends StatefulWidget {
   final String ayahText;
   final int ayahNumber;
   final String? translation;
   final bool isRtl;
   final bool isDark;
+  final int surahId;
   final String surahName;
-  final String languageName;
+  final String langName;
 
   const _AyahCard({
     required this.ayahText,
@@ -263,93 +210,99 @@ class _AyahCard extends StatelessWidget {
     required this.translation,
     required this.isRtl,
     required this.isDark,
+    required this.surahId,
     required this.surahName,
-    required this.languageName,
+    required this.langName,
   });
 
   @override
+  State<_AyahCard> createState() => _AyahCardState();
+}
+
+class _AyahCardState extends State<_AyahCard> {
+  bool _isFav = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _check();
+  }
+
+  Future<void> _check() async {
+    final f = await StorageService.isFavorite(widget.surahId, widget.ayahNumber);
+    if (mounted) setState(() => _isFav = f);
+  }
+
+  Future<void> _toggle() async {
+    if (_isFav) {
+      await StorageService.removeFavorite(widget.surahId, widget.ayahNumber);
+    } else {
+      await StorageService.addFavorite(
+        widget.surahId, widget.ayahNumber, widget.surahName, widget.ayahText);
+    }
+    if (mounted) setState(() => _isFav = !_isFav);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isDark = widget.isDark;
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark ? AppColors.nightCard : AppColors.creamCard,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.gold.withValues(alpha: 0.15),
-        ),
+        border: Border.all(color: AppColors.gold.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            ayahText,
+          Text(widget.ayahText,
             textAlign: TextAlign.center,
-            style: AppText.amiri(
-              fontSize: 26,
-              height: 2.0,
-              color: isDark ? AppColors.textLight : AppColors.textPrimary,
-            ),
-          ),
+            style: AppText.amiri(fontSize: 26, height: 2.0,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary)),
           const SizedBox(height: 14),
           Center(
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 gradient: AppGradients.goldShine,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Text(
-                '$ayahNumber',
-                style: AppText.poppins(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.emerald,
-                ),
-              ),
+                borderRadius: BorderRadius.circular(14)),
+              child: Text('${widget.ayahNumber}',
+                style: AppText.poppins(fontSize: 12,
+                  fontWeight: FontWeight.bold, color: AppColors.emerald)),
             ),
           ),
-          if (translation != null && translation!.isNotEmpty) ...[
+          if (widget.translation != null && widget.translation!.isNotEmpty) ...[
             const SizedBox(height: 16),
-            Container(
-              height: 1,
-              color: AppColors.gold.withValues(alpha: 0.15),
-            ),
+            Container(height: 1,
+              color: AppColors.gold.withValues(alpha: 0.15)),
             const SizedBox(height: 16),
             Directionality(
-              textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-              child: Text(
-                translation!,
+              textDirection: widget.isRtl ? TextDirection.rtl : TextDirection.ltr,
+              child: Text(widget.translation!,
                 textAlign: TextAlign.start,
-                style: AppText.poppins(
-                  fontSize: 15,
-                  height: 1.7,
-                  color: isDark
-                      ? AppColors.textMuted
-                      : AppColors.textSecondary,
-                ),
-              ),
+                style: AppText.poppins(fontSize: 15, height: 1.7,
+                  color: isDark ? AppColors.textMuted : AppColors.textSecondary)),
             ),
           ],
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _iconButton(
-                icon: Icons.share_rounded,
-                isDark: isDark,
-                onTap: () => ShareService.shareAyah(
+              _btn(Icons.bookmark_border_rounded, Icons.bookmark_rounded,
+                _isFav, _toggle),
+              const SizedBox(width: 8),
+              _btn(Icons.share_rounded, Icons.share_rounded, false, () {
+                ShareService.shareAyah(
                   context: context,
-                  surahName: surahName,
-                  ayahNumber: ayahNumber,
-                  ayahText: ayahText,
-                  translation: translation,
-                  languageName: languageName,
-                ),
-              ),
+                  surahName: widget.surahName,
+                  ayahNumber: widget.ayahNumber,
+                  ayahText: widget.ayahText,
+                  translation: widget.translation,
+                  languageName: widget.langName,
+                );
+              }),
             ],
           ),
         ],
@@ -357,11 +310,7 @@ class _AyahCard extends StatelessWidget {
     );
   }
 
-  Widget _iconButton({
-    required IconData icon,
-    required bool isDark,
-    required VoidCallback onTap,
-  }) {
+  Widget _btn(IconData icon, IconData activeIcon, bool active, VoidCallback onTap) {
     return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(12),
@@ -371,14 +320,14 @@ class _AyahCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColors.emerald.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            icon,
-            size: 18,
-            color: isDark ? AppColors.goldSoft : AppColors.emerald,
-          ),
+            color: active
+                ? AppColors.gold.withValues(alpha: 0.2)
+                : AppColors.emerald.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12)),
+          child: Icon(active ? activeIcon : icon, size: 18,
+            color: active
+                ? AppColors.gold
+                : (widget.isDark ? AppColors.goldSoft : AppColors.emerald)),
         ),
       ),
     );
