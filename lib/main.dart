@@ -4,6 +4,7 @@ import 'core/theme/app_text.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'data/database/quran_repository.dart';
+import 'data/database/tafsir_repository.dart';
 import 'data/database/translation_repository.dart';
 import 'features/splash/splash_screen.dart';
 
@@ -16,12 +17,16 @@ void main() async {
   final transRepo = TranslationRepository();
   await transRepo.loadLanguage('en');
 
+  final tafsirRepo = TafsirRepository();
+  await tafsirRepo.load();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider<TranslationRepository>.value(value: transRepo),
         Provider<QuranRepository>.value(value: quranRepo),
+        Provider<TafsirRepository>.value(value: tafsirRepo),
       ],
       child: const QuranKareemApp(),
     ),

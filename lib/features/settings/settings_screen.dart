@@ -308,8 +308,8 @@ class SettingsScreen extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 48,
+                height: 48,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: AppGradients.goldShine,
@@ -317,17 +317,17 @@ class SettingsScreen extends StatelessWidget {
                 child: const Icon(
                   Icons.menu_book_rounded,
                   color: AppColors.emerald,
-                  size: 20,
+                  size: 24,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'القرآن الكريم',
                     style: AppText.amiri(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AppColors.textLight
@@ -347,20 +347,82 @@ class SettingsScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Container(
-            height: 1,
-            color: AppColors.gold.withValues(alpha: 0.15),
-          ),
+          const SizedBox(height: 18),
+          Container(height: 1, color: AppColors.gold.withValues(alpha: 0.15)),
           const SizedBox(height: 16),
           Text(
-            'تطبيق مجاني لقراءة القرآن الكريم بـ 10 لغات عالمية.\nيعمل بدون إنترنت تماماً.',
+            'تطبيق مجاني لقراءة القرآن الكريم بـ 10 لغات عالمية.\n'
+            'يعمل بدون إنترنت تماماً.',
             style: AppText.poppins(
               fontSize: 13,
               height: 1.7,
-              color: isDark
-                  ? AppColors.textMuted
-                  : AppColors.textSecondary,
+              color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(height: 1, color: AppColors.gold.withValues(alpha: 0.15)),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Icon(
+                Icons.person_rounded,
+                size: 18,
+                color: isDark ? AppColors.goldSoft : AppColors.emerald,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'تطوير',
+                style: AppText.poppins(
+                  fontSize: 12,
+                  color: isDark
+                      ? AppColors.textMuted
+                      : AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'محمد واشمي',
+            style: AppText.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(
+                Icons.email_rounded,
+                size: 16,
+                color: isDark ? AppColors.goldSoft : AppColors.emerald,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'mohamedouachmi3@gmail.com',
+                  style: AppText.poppins(
+                    fontSize: 13,
+                    color: AppColors.gold,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Container(height: 1, color: AppColors.gold.withValues(alpha: 0.15)),
+          const SizedBox(height: 16),
+          Center(
+            child: Text(
+              '﴿ إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ ﴾',
+              textAlign: TextAlign.center,
+              style: AppText.amiri(
+                fontSize: 16,
+                height: 1.9,
+                color: isDark ? AppColors.goldSoft : AppColors.emerald,
+              ),
             ),
           ),
         ],

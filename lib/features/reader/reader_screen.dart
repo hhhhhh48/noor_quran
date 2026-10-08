@@ -5,6 +5,7 @@ import '../../core/services/storage_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_text.dart';
+import '../../data/database/tafsir_repository.dart';
 import '../../data/database/translation_repository.dart';
 import '../../data/models/translation.dart';
 
@@ -59,14 +60,10 @@ class ReaderScreen extends StatelessWidget {
                   Text(surah.name,
                     style: AppText.amiri(fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: isDark
-                          ? AppColors.textLight
-                          : AppColors.textPrimary)),
+                      color: isDark ? AppColors.textLight : AppColors.textPrimary)),
                   Text('${surah.totalVerses} آيات',
                     style: AppText.poppins(fontSize: 11,
-                      color: isDark
-                          ? AppColors.textMuted
-                          : AppColors.textSecondary)),
+                      color: isDark ? AppColors.textMuted : AppColors.textSecondary)),
                 ],
               ),
             ),
@@ -152,22 +149,16 @@ class ReaderScreen extends StatelessWidget {
                     final l = kSupportedLanguages[i];
                     final cur = l.code == repo.currentLanguage;
                     return ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 4),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
                       title: Text(l.nativeName,
                         style: AppText.poppins(fontSize: 16,
                           fontWeight: cur ? FontWeight.bold : FontWeight.normal,
-                          color: isDark
-                              ? AppColors.textLight
-                              : AppColors.textPrimary)),
+                          color: isDark ? AppColors.textLight : AppColors.textPrimary)),
                       subtitle: Text(l.englishName,
                         style: AppText.poppins(fontSize: 12,
-                          color: isDark
-                              ? AppColors.textMuted
-                              : AppColors.textSecondary)),
+                          color: isDark ? AppColors.textMuted : AppColors.textSecondary)),
                       trailing: cur
-                          ? const Icon(Icons.check_circle,
-                              color: AppColors.emerald)
+                          ? const Icon(Icons.check_circle, color: AppColors.emerald)
                           : null,
                       onTap: () async {
                         final ok = await repo.loadLanguage(l.code);
@@ -175,10 +166,8 @@ class ReaderScreen extends StatelessWidget {
                           Navigator.pop(context);
                           if (!ok) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(
-                                'الترجمة ${l.nativeName} غير متوفرة',
-                                style: AppText.poppins())),
-                            );
+                              SnackBar(content: Text('الترجمة ${l.nativeName} غير متوفرة',
+                                style: AppText.poppins())));
                           }
                         }
                       },
@@ -243,6 +232,87 @@ class _AyahCardState extends State<_AyahCard> {
     if (mounted) setState(() => _isFav = !_isFav);
   }
 
+  void _showTafsir(BuildContext context) {
+    final repo = context.read<TafsirRepository>();
+    final tafsir = repo.getTafsir(widget.surahId, widget.ayahNumber);
+    final isDark = widget.isDark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.nightCard : AppColors.creamCard,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12, bottom: 8),
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                borderRadius: BorderRadius.circular(2)),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
+              child: Column(
+                children: [
+                  Text('التفسير الميسر',
+                    style: AppText.poppins(fontSize: 18, fontWeight: FontWeight.bold,
+                      color: isDark ? AppColors.textLight : AppColors.textPrimary)),
+                  const SizedBox(height: 6),
+                  Text('${widget.surahName} • الآية ${widget.ayahNumber}',
+                    style: AppText.poppins(fontSize: 12, color: AppColors.gold)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Divider(color: AppColors.gold.withValues(alpha: 0.15), height: 1),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.nightElevated : AppColors.cream,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.gold.withValues(alpha: 0.2)),
+                      ),
+                      child: Text(widget.ayahText,
+                        textAlign: TextAlign.center,
+                        style: AppText.amiri(fontSize: 22, height: 1.9,
+                          color: isDark ? AppColors.goldSoft : AppColors.emerald)),
+                    ),
+                    const SizedBox(height: 20),
+                    if (tafsir == null || tafsir.isEmpty)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(30),
+                          child: Text('التفسير غير متوفر لهذه الآية',
+                            style: AppText.poppins(fontSize: 14,
+                              color: isDark ? AppColors.textMuted : AppColors.textSecondary)),
+                        ),
+                      )
+                    else
+                      Text(tafsir,
+                        style: AppText.poppins(fontSize: 15, height: 1.9,
+                          color: isDark ? AppColors.textLight : AppColors.textPrimary)),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
@@ -275,8 +345,7 @@ class _AyahCardState extends State<_AyahCard> {
           ),
           if (widget.translation != null && widget.translation!.isNotEmpty) ...[
             const SizedBox(height: 16),
-            Container(height: 1,
-              color: AppColors.gold.withValues(alpha: 0.15)),
+            Container(height: 1, color: AppColors.gold.withValues(alpha: 0.15)),
             const SizedBox(height: 16),
             Directionality(
               textDirection: widget.isRtl ? TextDirection.rtl : TextDirection.ltr,
@@ -290,6 +359,9 @@ class _AyahCardState extends State<_AyahCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              _btn(Icons.book_rounded, Icons.book_rounded, false,
+                () => _showTafsir(context)),
+              const SizedBox(width: 8),
               _btn(Icons.bookmark_border_rounded, Icons.bookmark_rounded,
                 _isFav, _toggle),
               const SizedBox(width: 8),
