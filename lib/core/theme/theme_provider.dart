@@ -5,14 +5,17 @@ class ThemeProvider extends ChangeNotifier {
   static const _keyMode = 'theme_mode';
   static const _keyFontSize = 'font_size';
   static const _keyDefaultLang = 'default_lang';
+  static const _keyMushafMode = 'mushaf_mode';
 
   ThemeMode _mode = ThemeMode.system;
   double _fontSize = 1.0;
   String _defaultLang = 'en';
+  bool _mushafMode = false;
 
   ThemeMode get themeMode => _mode;
   double get fontSize => _fontSize;
   String get defaultLang => _defaultLang;
+  bool get mushafMode => _mushafMode;
 
   ThemeProvider() {
     _load();
@@ -24,9 +27,9 @@ class ThemeProvider extends ChangeNotifier {
     if (v == 'light') _mode = ThemeMode.light;
     if (v == 'dark') _mode = ThemeMode.dark;
     if (v == 'system') _mode = ThemeMode.system;
-
     _fontSize = prefs.getDouble(_keyFontSize) ?? 1.0;
     _defaultLang = prefs.getString(_keyDefaultLang) ?? 'en';
+    _mushafMode = prefs.getBool(_keyMushafMode) ?? false;
     notifyListeners();
   }
 
@@ -53,7 +56,14 @@ class ThemeProvider extends ChangeNotifier {
   Future<void> setDefaultLang(String code) async {
     _defaultLang = code;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyDefaultLang, code);
+    await prefs.setString(_keyDefaultLang, _defaultLang);
+    notifyListeners();
+  }
+
+  Future<void> setMushafMode(bool v) async {
+    _mushafMode = v;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyMushafMode, v);
     notifyListeners();
   }
 }
