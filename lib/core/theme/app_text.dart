@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppText {
+  static double scale = 1.0;
+
   static TextStyle amiri({
     double? fontSize,
     FontWeight? fontWeight,
@@ -10,7 +12,7 @@ class AppText {
   }) =>
       TextStyle(
         fontFamily: 'Amiri',
-        fontSize: fontSize,
+        fontSize: fontSize == null ? null : fontSize * scale,
         fontWeight: fontWeight,
         color: color,
         height: height,
@@ -26,7 +28,7 @@ class AppText {
   }) =>
       TextStyle(
         fontFamily: 'Poppins',
-        fontSize: fontSize,
+        fontSize: fontSize == null ? null : fontSize * scale,
         fontWeight: fontWeight,
         color: color,
         height: height,

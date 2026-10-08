@@ -7,6 +7,7 @@ import '../../core/theme/app_text.dart';
 import '../../data/database/quran_repository.dart';
 import '../surahs/surahs_screen.dart';
 import '../reader/reader_screen.dart';
+import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,11 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: 'البحث',
         subtitle: 'قريباً',
       ),
-      const _PlaceholderTab(
-        icon: Icons.settings_rounded,
-        title: 'الإعدادات',
-        subtitle: 'قريباً',
-      ),
+      const SettingsScreen(),
     ];
 
     return Scaffold(
@@ -70,8 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
           height: 68,
           indicatorColor: AppColors.emerald.withValues(alpha: 0.15),
-          labelBehavior:
-              NavigationDestinationLabelBehavior.alwaysShow,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
@@ -93,8 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             NavigationDestination(
               icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings_rounded,
-                  color: AppColors.emerald),
+              selectedIcon:
+                  Icon(Icons.settings_rounded, color: AppColors.emerald),
               label: 'الإعدادات',
             ),
           ],
@@ -333,7 +329,6 @@ class _HomeTab extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: AppColors.gold.withValues(alpha: 0.2),
-              width: 1,
             ),
             boxShadow: isDark ? null : AppShadows.cardLight,
           ),
@@ -421,11 +416,7 @@ class _HomeTab extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Icon(
-                    a.$1,
-                    color: AppColors.emerald,
-                    size: 24,
-                  ),
+                  Icon(a.$1, color: AppColors.emerald, size: 24),
                   const SizedBox(height: 8),
                   Text(
                     a.$2,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'core/theme/app_text.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'data/database/quran_repository.dart';
@@ -19,8 +20,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        Provider<QuranRepository>.value(value: quranRepo),
         ChangeNotifierProvider<TranslationRepository>.value(value: transRepo),
+        Provider<QuranRepository>.value(value: quranRepo),
       ],
       child: const QuranKareemApp(),
     ),
@@ -33,6 +34,8 @@ class QuranKareemApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tp = Provider.of<ThemeProvider>(context);
+    AppText.scale = tp.fontSize;
+
     return MaterialApp(
       title: 'القرآن الكريم',
       debugShowCheckedModeBanner: false,
