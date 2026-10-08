@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/services/share_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_text.dart';
@@ -45,6 +46,13 @@ class ReaderScreen extends StatelessWidget {
                 ),
                 tooltip: langInfo.englishName,
                 onPressed: () => _showLanguagePicker(context, transRepo),
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.share_rounded,
+                  color: isDark ? AppColors.goldSoft : AppColors.emerald,
+                ),
+                onPressed: () => ShareService.shareApp(),
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
@@ -95,6 +103,8 @@ class ReaderScreen extends StatelessWidget {
                   translation: translation,
                   isRtl: isRtl,
                   isDark: isDark,
+                  surahName: surah.name,
+                  languageName: langInfo.englishName,
                 );
               },
             ),
@@ -244,6 +254,8 @@ class _AyahCard extends StatelessWidget {
   final String? translation;
   final bool isRtl;
   final bool isDark;
+  final String surahName;
+  final String languageName;
 
   const _AyahCard({
     required this.ayahText,
@@ -251,6 +263,8 @@ class _AyahCard extends StatelessWidget {
     required this.translation,
     required this.isRtl,
     required this.isDark,
+    required this.surahName,
+    required this.languageName,
   });
 
   @override
@@ -320,7 +334,52 @@ class _AyahCard extends StatelessWidget {
               ),
             ),
           ],
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              _iconButton(
+                icon: Icons.share_rounded,
+                isDark: isDark,
+                onTap: () => ShareService.shareAyah(
+                  context: context,
+                  surahName: surahName,
+                  ayahNumber: ayahNumber,
+                  ayahText: ayahText,
+                  translation: translation,
+                  languageName: languageName,
+                ),
+              ),
+            ],
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _iconButton({
+    required IconData icon,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: AppColors.emerald.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            icon,
+            size: 18,
+            color: isDark ? AppColors.goldSoft : AppColors.emerald,
+          ),
+        ),
       ),
     );
   }
