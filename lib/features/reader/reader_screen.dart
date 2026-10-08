@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_text.dart';
 import '../../data/database/translation_repository.dart';
 import '../../data/models/translation.dart';
@@ -20,95 +21,110 @@ class ReaderScreen extends StatelessWidget {
     final isRtl = langInfo.direction == 'rtl';
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(surah.name),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.translate),
-            tooltip: langInfo.englishName,
-            onPressed: () => _showLanguagePicker(context, transRepo),
+      backgroundColor: isDark ? AppColors.night : AppColors.cream,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            backgroundColor: isDark ? AppColors.night : AppColors.cream,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            expandedHeight: 140,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                color: isDark ? AppColors.goldSoft : AppColors.emerald,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  Icons.translate_rounded,
+                  color: isDark ? AppColors.goldSoft : AppColors.emerald,
+                ),
+                tooltip: langInfo.englishName,
+                onPressed: () => _showLanguagePicker(context, transRepo),
+              ),
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(bottom: 16),
+              centerTitle: true,
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    surah.name,
+                    style: AppText.amiri(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: isDark
+                          ? AppColors.textLight
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    '${surah.totalVerses} آيات',
+                    style: AppText.poppins(
+                      fontSize: 11,
+                      color: isDark
+                          ? AppColors.textMuted
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+            sliver: SliverToBoxAdapter(
+              child: _buildBismillah(isDark),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+            sliver: SliverList.builder(
+              itemCount: surah.ayahs.length,
+              itemBuilder: (context, i) {
+                final a = surah.ayahs[i];
+                final translation = transRepo.verse(surah.id, a.number);
+                return _AyahCard(
+                  ayahText: a.text,
+                  ayahNumber: a.number,
+                  translation: translation,
+                  isRtl: isRtl,
+                  isDark: isDark,
+                );
+              },
+            ),
           ),
         ],
       ),
-      body: SafeArea(
-        child: ListView.builder(
-          padding: const EdgeInsets.all(20),
-          itemCount: surah.ayahs.length,
-          itemBuilder: (context, i) {
-            final a = surah.ayahs[i];
-            final translation = transRepo.verse(surah.id, a.number);
-            return Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color:
-                    isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: AppColors.gold.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    a.text,
-                    textAlign: TextAlign.center,
-                    style: AppText.amiri(
-                      fontSize: 26,
-                      height: 2.0,
-                      color:
-                          isDark ? AppColors.textLight : AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.gold.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${a.number}',
-                        style: AppText.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.gold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (translation != null && translation.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Divider(
-                      color: AppColors.gold.withValues(alpha: 0.2),
-                      height: 1,
-                    ),
-                    const SizedBox(height: 16),
-                    Directionality(
-                      textDirection:
-                          isRtl ? TextDirection.rtl : TextDirection.ltr,
-                      child: Text(
-                        translation,
-                        textAlign: TextAlign.start,
-                        style: AppText.poppins(
-                          fontSize: 15,
-                          height: 1.6,
-                          color: isDark
-                              ? Colors.white70
-                              : AppColors.textMuted,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            );
-          },
+    );
+  }
+
+  Widget _buildBismillah(bool isDark) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? const LinearGradient(
+                colors: [Color(0xFF1A2E25), Color(0xFF12201A)],
+              )
+            : AppGradients.heroEmerald,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(
+        child: Text(
+          'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+          textAlign: TextAlign.center,
+          style: AppText.amiri(
+            fontSize: 24,
+            color: isDark ? AppColors.goldSoft : Colors.white,
+            height: 1.8,
+          ),
         ),
       ),
     );
@@ -119,55 +135,192 @@ class ReaderScreen extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (_) => Container(
-        padding: const EdgeInsets.all(20),
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'اختر لغة الترجمة',
-              style: AppText.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.nightCard : AppColors.creamCard,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(28),
+            ),
+          ),
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.textMuted
+                      : AppColors.textSecondary,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  'اختر لغة الترجمة',
+                  style: AppText.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark
+                        ? AppColors.textLight
+                        : AppColors.textPrimary,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: kSupportedLanguages.length,
+                  itemBuilder: (_, i) {
+                    final lang = kSupportedLanguages[i];
+                    final isCurrent = lang.code == repo.currentLanguage;
+                    return ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 4,
+                      ),
+                      title: Text(
+                        lang.nativeName,
+                        style: AppText.poppins(
+                          fontSize: 16,
+                          fontWeight: isCurrent
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isDark
+                              ? AppColors.textLight
+                              : AppColors.textPrimary,
+                        ),
+                      ),
+                      subtitle: Text(
+                        lang.englishName,
+                        style: AppText.poppins(
+                          fontSize: 12,
+                          color: isDark
+                              ? AppColors.textMuted
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                      trailing: isCurrent
+                          ? const Icon(
+                              Icons.check_circle,
+                              color: AppColors.emerald,
+                            )
+                          : null,
+                      onTap: () async {
+                        final ok = await repo.loadLanguage(lang.code);
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          if (!ok) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'الترجمة ${lang.nativeName} غير متوفرة',
+                                  style: AppText.poppins(),
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _AyahCard extends StatelessWidget {
+  final String ayahText;
+  final int ayahNumber;
+  final String? translation;
+  final bool isRtl;
+  final bool isDark;
+
+  const _AyahCard({
+    required this.ayahText,
+    required this.ayahNumber,
+    required this.translation,
+    required this.isRtl,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.nightCard : AppColors.creamCard,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppColors.gold.withValues(alpha: 0.15),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            ayahText,
+            textAlign: TextAlign.center,
+            style: AppText.amiri(
+              fontSize: 26,
+              height: 2.0,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 6,
+              ),
+              decoration: BoxDecoration(
+                gradient: AppGradients.goldShine,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(
+                '$ayahNumber',
+                style: AppText.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.emerald,
+                ),
               ),
             ),
+          ),
+          if (translation != null && translation!.isNotEmpty) ...[
             const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: kSupportedLanguages.length,
-                itemBuilder: (_, i) {
-                  final lang = kSupportedLanguages[i];
-                  return ListTile(
-                    title: Text(lang.nativeName,
-                        style: AppText.poppins(fontSize: 16)),
-                    subtitle: Text(lang.englishName,
-                        style: AppText.poppins(fontSize: 12)),
-                    trailing: lang.code == repo.currentLanguage
-                        ? const Icon(Icons.check, color: AppColors.emerald)
-                        : null,
-                    onTap: () async {
-                      final ok = await repo.loadLanguage(lang.code);
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                        if (!ok) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'الترجمة ${lang.nativeName} غير متوفرة بعد',
-                                style: AppText.poppins(),
-                              ),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                  );
-                },
+            Container(
+              height: 1,
+              color: AppColors.gold.withValues(alpha: 0.15),
+            ),
+            const SizedBox(height: 16),
+            Directionality(
+              textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+              child: Text(
+                translation!,
+                textAlign: TextAlign.start,
+                style: AppText.poppins(
+                  fontSize: 15,
+                  height: 1.7,
+                  color: isDark
+                      ? AppColors.textMuted
+                      : AppColors.textSecondary,
+                ),
               ),
             ),
           ],
-        ),
+        ],
       ),
     );
   }

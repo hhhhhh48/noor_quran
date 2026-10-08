@@ -1,12 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_gradients.dart';
+import '../../core/theme/app_shadows.dart';
+import '../../core/theme/app_text.dart';
 import '../../data/database/quran_repository.dart';
 import '../surahs/surahs_screen.dart';
-import 'package:flutter/material.dart';
-import '../../core/theme/app_text.dart';
-import '../../core/theme/app_colors.dart';
+import '../reader/reader_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -17,34 +21,45 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      body: IndexedStack(
-        index: _tab,
-        children: [
-          _buildHome(context, isDark),
-          SurahsScreen(repo: context.read<QuranRepository>()),
-          const Center(child: Text('البحث')),
-          const Center(child: Text('الإعدادات')),
-        ],
+    final repo = context.read<QuranRepository>();
+
+    final pages = [
+      _HomeTab(isDark: isDark),
+      SurahsScreen(repo: repo),
+      const _PlaceholderTab(
+        icon: Icons.search_rounded,
+        title: 'البحث',
+        subtitle: 'قريباً',
       ),
+      const _PlaceholderTab(
+        icon: Icons.settings_rounded,
+        title: 'الإعدادات',
+        subtitle: 'قريباً',
+      ),
+    ];
+
+    return Scaffold(
+      backgroundColor: isDark ? AppColors.night : AppColors.cream,
+      extendBody: true,
+      body: IndexedStack(index: _tab, children: pages),
       bottomNavigationBar: _buildNav(isDark),
     );
   }
 
   Widget _buildNav(bool isDark) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        color: isDark
+            ? AppColors.nightCard.withValues(alpha: 0.95)
+            : Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: (isDark ? Colors.black : AppColors.emerald)
-                .withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        boxShadow: AppShadows.navShadow,
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.03),
+        ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
@@ -53,11 +68,15 @@ class _HomeScreenState extends State<HomeScreen> {
           onDestinationSelected: (i) => setState(() => _tab = i),
           backgroundColor: Colors.transparent,
           elevation: 0,
+          height: 68,
           indicatorColor: AppColors.emerald.withValues(alpha: 0.15),
+          labelBehavior:
+              NavigationDestinationLabelBehavior.alwaysShow,
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded, color: AppColors.emerald),
+              selectedIcon:
+                  Icon(Icons.home_rounded, color: AppColors.emerald),
               label: 'الرئيسية',
             ),
             NavigationDestination(
@@ -68,13 +87,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             NavigationDestination(
               icon: Icon(Icons.search_outlined),
-              selectedIcon: Icon(Icons.search_rounded, color: AppColors.emerald),
+              selectedIcon:
+                  Icon(Icons.search_rounded, color: AppColors.emerald),
               label: 'البحث',
             ),
             NavigationDestination(
               icon: Icon(Icons.settings_outlined),
-              selectedIcon:
-                  Icon(Icons.settings_rounded, color: AppColors.emerald),
+              selectedIcon: Icon(Icons.settings_rounded,
+                  color: AppColors.emerald),
               label: 'الإعدادات',
             ),
           ],
@@ -82,186 +102,347 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
 
-  Widget _buildHome(BuildContext context, bool isDark) {
+class _PlaceholderTab extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  const _PlaceholderTab({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 64, color: AppColors.gold.withValues(alpha: 0.5)),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            style: AppText.poppins(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            subtitle,
+            style: AppText.poppins(
+              fontSize: 14,
+              color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeTab extends StatelessWidget {
+  final bool isDark;
+  const _HomeTab({required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'السلام عليكم',
-                      style: AppText.poppins(
-                        fontSize: 14,
-                        color: isDark
-                            ? Colors.white60
-                            : AppColors.textMuted,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'القرآن الكريم',
-                      style: AppText.amiri(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: isDark
-                            ? AppColors.goldSoft
-                            : AppColors.emerald,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColors.surfaceDark
-                        : AppColors.surfaceLight,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.notifications_none_rounded,
-                    color: isDark ? AppColors.goldSoft : AppColors.emerald,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 28),
-            _buildVerseOfDay(isDark),
-            const SizedBox(height: 24),
-            Text(
-              'متابعة القراءة',
-              style: AppText.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.textLight : AppColors.textDark,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buildContinueCard(isDark),
-          ],
-        ),
+      bottom: false,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+        children: [
+          _buildHeader(context),
+          const SizedBox(height: 28),
+          _buildVerseOfDay(context),
+          const SizedBox(height: 24),
+          _buildSectionTitle('متابعة القراءة'),
+          const SizedBox(height: 12),
+          _buildContinueCard(context),
+          const SizedBox(height: 24),
+          _buildSectionTitle('اختصارات سريعة'),
+          const SizedBox(height: 12),
+          _buildQuickActions(context),
+        ],
       ),
     );
   }
 
-  Widget _buildVerseOfDay(bool isDark) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.emerald, AppColors.emeraldSoft],
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'السلام عليكم',
+              style: AppText.poppins(
+                fontSize: 14,
+                color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'القرآن الكريم',
+              style: AppText.amiri(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: isDark ? AppColors.goldSoft : AppColors.emerald,
+              ),
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.emerald.withValues(alpha: 0.3),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.nightCard : AppColors.creamCard,
+            shape: BoxShape.circle,
+            boxShadow: AppShadows.cardLight,
           ),
-        ],
+          child: Icon(
+            Icons.notifications_none_rounded,
+            color: isDark ? AppColors.goldSoft : AppColors.emerald,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVerseOfDay(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        gradient: AppGradients.heroEmerald,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: AppShadows.softEmerald,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome, color: AppColors.gold, size: 20),
-              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.gold.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome,
+                  color: AppColors.goldBright,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 10),
               Text(
                 'آية اليوم',
                 style: AppText.poppins(
                   fontSize: 14,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.goldSoft,
-                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Text(
             '﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',
             style: AppText.amiri(
-              fontSize: 26,
+              fontSize: 30,
               color: Colors.white,
               height: 1.8,
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            'سورة طه - الآية 114',
-            style: AppText.poppins(
-              fontSize: 12,
-              color: AppColors.gold.withValues(alpha: 0.9),
-            ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Container(
+                width: 24,
+                height: 1,
+                color: AppColors.gold.withValues(alpha: 0.6),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'سورة طه • الآية ١١٤',
+                style: AppText.poppins(
+                  fontSize: 12,
+                  color: AppColors.goldBright.withValues(alpha: 0.9),
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildContinueCard(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+  Widget _buildSectionTitle(String title) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 20,
+          decoration: BoxDecoration(
+            color: AppColors.gold,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          title,
+          style: AppText.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: isDark ? AppColors.textLight : AppColors.textPrimary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContinueCard(BuildContext context) {
+    final repo = context.read<QuranRepository>();
+    final fatiha = repo.surahs.isNotEmpty ? repo.surahs.first : null;
+
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.gold.withValues(alpha: 0.2),
-          width: 1,
+        onTap: fatiha == null
+            ? null
+            : () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ReaderScreen(surah: fatiha),
+                  ),
+                ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.nightCard : AppColors.creamCard,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: AppColors.gold.withValues(alpha: 0.2),
+              width: 1,
+            ),
+            boxShadow: isDark ? null : AppShadows.cardLight,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: AppGradients.goldShine,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: AppShadows.goldGlow,
+                ),
+                child: const Icon(
+                  Icons.bookmark_rounded,
+                  color: AppColors.emerald,
+                  size: 26,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      fatiha?.name ?? 'سورة الفاتحة',
+                      style: AppText.amiri(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: isDark
+                            ? AppColors.textLight
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'الآية ١ من ٧',
+                      style: AppText.poppins(
+                        fontSize: 12,
+                        color: isDark
+                            ? AppColors.textMuted
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 14,
+                color: isDark
+                    ? AppColors.textMuted
+                    : AppColors.textSecondary,
+              ),
+            ],
+          ),
         ),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: AppColors.emerald.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Icon(
-              Icons.bookmark_rounded,
-              color: AppColors.emerald,
+    );
+  }
+
+  Widget _buildQuickActions(BuildContext context) {
+    final actions = [
+      (Icons.book_rounded, 'المصحف'),
+      (Icons.translate_rounded, 'الترجمة'),
+      (Icons.headphones_rounded, 'الصوت'),
+      (Icons.explore_rounded, 'القبلة'),
+    ];
+
+    return Row(
+      children: actions.map((a) {
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.nightCard : AppColors.creamCard,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.03),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    a.$1,
+                    color: AppColors.emerald,
+                    size: 24,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    a.$2,
+                    style: AppText.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: isDark
+                          ? AppColors.textLight
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'سورة الفاتحة',
-                  style: AppText.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? AppColors.textLight : AppColors.textDark,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'الآية 1 من 7',
-                  style: AppText.poppins(
-                    fontSize: 12,
-                    color: isDark ? Colors.white54 : AppColors.textMuted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-        ],
-      ),
+        );
+      }).toList(),
     );
   }
 }
