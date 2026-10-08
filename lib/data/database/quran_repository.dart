@@ -11,11 +11,10 @@ class QuranRepository {
 
   Future<void> load() async {
     if (_loaded) return;
-    final raw = await rootBundle.loadString('assets/data/surahs_sample.json');
-    final data = json.decode(raw);
-    _surahs = (data['surahs'] as List)
-        .map((e) => Surah.fromJson(e))
-        .toList();
+    final raw = await rootBundle.loadString('assets/data/quran_full.json');
+    final List data = json.decode(raw);
+    _surahs =
+        data.map((e) => Surah.fromJson(e as Map<String, dynamic>)).toList();
     _loaded = true;
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_text.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_text.dart';
 import '../../data/database/quran_repository.dart';
 import '../reader/reader_screen.dart';
 
@@ -98,7 +98,7 @@ class _SurahTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${surah.englishName} • ${surah.ayahs.length} آيات',
+                      '${surah.transliteration} • ${surah.totalVerses} آيات',
                       style: AppText.poppins(
                         fontSize: 12,
                         color:

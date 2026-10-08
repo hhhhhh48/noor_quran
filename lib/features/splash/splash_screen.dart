@@ -79,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 32),
                 Text(
-                  'نور القرآن',
+                  'القرآن الكريم',
                   style: AppText.amiri(
                     fontSize: 42,
                     fontWeight: FontWeight.bold,
@@ -88,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'NOOR QURAN',
+                  'THE HOLY QURAN',
                   style: AppText.poppins(
                     fontSize: 14,
                     letterSpacing: 6,

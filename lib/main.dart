@@ -27,7 +27,7 @@ class NoorQuranApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final tp = Provider.of<ThemeProvider>(context);
     return MaterialApp(
-      title: 'Noor Quran',
+      title: 'القرآن الكريم',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'نور القرآن',
+                      'القرآن الكريم',
                       style: AppText.amiri(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
