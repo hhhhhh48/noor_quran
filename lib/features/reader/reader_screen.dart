@@ -234,81 +234,145 @@ class _AyahCardState extends State<_AyahCard> {
 
   void _showTafsir(BuildContext context) {
     final repo = context.read<TafsirRepository>();
-    final tafsir = repo.getTafsir(widget.surahId, widget.ayahNumber);
     final isDark = widget.isDark;
+    final available = repo.loadedLanguages;
+    String selectedLang = repo.currentLanguage;
+    if (!available.contains(selectedLang) && available.isNotEmpty) {
+      selectedLang = available.first;
+    }
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.nightCard : AppColors.creamCard,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 8),
-              width: 40, height: 4,
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.textMuted : AppColors.textSecondary,
-                borderRadius: BorderRadius.circular(2)),
+      builder: (_) => StatefulBuilder(
+        builder: (ctx, setSt) {
+          final tafsir = repo.getTafsir(
+            widget.surahId, widget.ayahNumber, lang: selectedLang);
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.85,
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.nightCard : AppColors.creamCard,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
-              child: Column(
-                children: [
-                  Text('التفسير الميسر',
-                    style: AppText.poppins(fontSize: 18, fontWeight: FontWeight.bold,
-                      color: isDark ? AppColors.textLight : AppColors.textPrimary)),
-                  const SizedBox(height: 6),
-                  Text('${widget.surahName} • الآية ${widget.ayahNumber}',
-                    style: AppText.poppins(fontSize: 12, color: AppColors.gold)),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Divider(color: AppColors.gold.withValues(alpha: 0.15), height: 1),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.nightElevated : AppColors.cream,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.gold.withValues(alpha: 0.2)),
-                      ),
-                      child: Text(widget.ayahText,
-                        textAlign: TextAlign.center,
-                        style: AppText.amiri(fontSize: 22, height: 1.9,
-                          color: isDark ? AppColors.goldSoft : AppColors.emerald)),
-                    ),
-                    const SizedBox(height: 20),
-                    if (tafsir == null || tafsir.isEmpty)
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(30),
-                          child: Text('التفسير غير متوفر لهذه الآية',
-                            style: AppText.poppins(fontSize: 14,
-                              color: isDark ? AppColors.textMuted : AppColors.textSecondary)),
-                        ),
-                      )
-                    else
-                      Text(tafsir,
-                        style: AppText.poppins(fontSize: 15, height: 1.9,
-                          color: isDark ? AppColors.textLight : AppColors.textPrimary)),
-                  ],
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 12, bottom: 8),
+                  width: 40, height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                    borderRadius: BorderRadius.circular(2)),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.menu_book_rounded, size: 20,
+                            color: isDark ? AppColors.goldSoft : AppColors.emerald),
+                          const SizedBox(width: 8),
+                          Text('التفسير',
+                            style: AppText.poppins(fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? AppColors.textLight : AppColors.textPrimary)),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text('${widget.surahName} • الآية ${widget.ayahNumber}',
+                        style: AppText.poppins(fontSize: 12, color: AppColors.gold)),
+                    ],
+                  ),
+                ),
+                if (available.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 40,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: available.map((code) {
+                        final label = TafsirRepository.availableLangs[code] ?? code;
+                        final sel = code == selectedLang;
+                        return GestureDetector(
+                          onTap: () {
+                            repo.setLanguage(code);
+                            setSt(() => selectedLang = code);
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: sel
+                                  ? AppColors.emerald
+                                  : (isDark ? AppColors.nightElevated : AppColors.cream),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: sel
+                                    ? AppColors.emerald
+                                    : AppColors.gold.withValues(alpha: 0.3)),
+                            ),
+                            child: Text(label,
+                              style: AppText.poppins(fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: sel
+                                    ? Colors.white
+                                    : (isDark ? AppColors.textLight : AppColors.textPrimary))),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                Container(height: 1, color: AppColors.gold.withValues(alpha: 0.15)),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.nightElevated : AppColors.cream,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: AppColors.gold.withValues(alpha: 0.2)),
+                          ),
+                          child: Text(widget.ayahText,
+                            textAlign: TextAlign.center,
+                            style: AppText.amiri(fontSize: 22, height: 1.9,
+                              color: isDark ? AppColors.goldSoft : AppColors.emerald)),
+                        ),
+                        const SizedBox(height: 20),
+                        if (tafsir == null || tafsir.isEmpty)
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(30),
+                              child: Text('التفسير غير متوفر بهذه اللغة',
+                                style: AppText.poppins(fontSize: 14,
+                                  color: isDark ? AppColors.textMuted : AppColors.textSecondary)),
+                            ),
+                          )
+                        else
+                          Directionality(
+                            textDirection: (selectedLang == 'ar' || selectedLang == 'ur')
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
+                            child: Text(tafsir,
+                              style: AppText.poppins(fontSize: 15, height: 1.9,
+                                color: isDark ? AppColors.textLight : AppColors.textPrimary)),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
