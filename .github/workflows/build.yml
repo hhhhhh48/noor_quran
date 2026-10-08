@@ -1,6 +1,9 @@
 name: Build APK
 
-on:
+  push:
+    branches: [ main, master ]on:
+permissions:
+  contents: write
   push:
     branches: [ main, master ]
   workflow_dispatch:
