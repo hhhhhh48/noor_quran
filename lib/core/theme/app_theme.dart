@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
+import 'app_text.dart';
 
 class AppTheme {
   static ThemeData get light => ThemeData(
@@ -14,7 +14,7 @@ class AppTheme {
       secondary: AppColors.gold,
       surface: AppColors.surfaceLight,
     ),
-    textTheme: GoogleFonts.poppinsTextTheme().apply(
+    textTheme: TextTheme().apply(
       bodyColor: AppColors.textDark,
       displayColor: AppColors.textDark,
     ),
@@ -24,7 +24,7 @@ class AppTheme {
       centerTitle: true,
       scrolledUnderElevation: 0,
       iconTheme: const IconThemeData(color: AppColors.emerald),
-      titleTextStyle: GoogleFonts.poppins(
+      titleTextStyle: AppText.poppins(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: AppColors.emerald,
@@ -51,7 +51,7 @@ class AppTheme {
       secondary: AppColors.gold,
       surface: AppColors.surfaceDark,
     ),
-    textTheme: GoogleFonts.poppinsTextTheme().apply(
+    textTheme: TextTheme().apply(
       bodyColor: AppColors.textLight,
       displayColor: AppColors.textLight,
     ),
@@ -61,7 +61,7 @@ class AppTheme {
       centerTitle: true,
       scrolledUnderElevation: 0,
       iconTheme: const IconThemeData(color: AppColors.goldSoft),
-      titleTextStyle: GoogleFonts.poppins(
+      titleTextStyle: AppText.poppins(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: AppColors.goldSoft,

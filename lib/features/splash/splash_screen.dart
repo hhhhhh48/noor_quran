@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_text.dart';
 import '../../core/theme/app_colors.dart';
 import '../home/home_screen.dart';
 
@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
                 const SizedBox(height: 32),
                 Text(
                   'نور القرآن',
-                  style: GoogleFonts.amiri(
+                  style: AppText.amiri(
                     fontSize: 42,
                     fontWeight: FontWeight.bold,
                     color: AppColors.goldSoft,
@@ -89,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen>
                 const SizedBox(height: 8),
                 Text(
                   'NOOR QURAN',
-                  style: GoogleFonts.poppins(
+                  style: AppText.poppins(
                     fontSize: 14,
                     letterSpacing: 6,
                     color: AppColors.gold.withValues(alpha: 0.8),

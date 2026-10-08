@@ -2,7 +2,7 @@ import 'package:provider/provider.dart';
 import '../../data/database/quran_repository.dart';
 import '../surahs/surahs_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_text.dart';
 import '../../core/theme/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       'السلام عليكم',
-                      style: GoogleFonts.poppins(
+                      style: AppText.poppins(
                         fontSize: 14,
                         color: isDark
                             ? Colors.white60
@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 4),
                     Text(
                       'نور القرآن',
-                      style: GoogleFonts.amiri(
+                      style: AppText.amiri(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                         color: isDark
@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 24),
             Text(
               'متابعة القراءة',
-              style: GoogleFonts.poppins(
+              style: AppText.poppins(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: isDark ? AppColors.textLight : AppColors.textDark,
@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 8),
               Text(
                 'آية اليوم',
-                style: GoogleFonts.poppins(
+                style: AppText.poppins(
                   fontSize: 14,
                   color: AppColors.goldSoft,
                   fontWeight: FontWeight.w500,
@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 16),
           Text(
             '﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾',
-            style: GoogleFonts.amiri(
+            style: AppText.amiri(
               fontSize: 26,
               color: Colors.white,
               height: 1.8,
@@ -200,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           Text(
             'سورة طه - الآية 114',
-            style: GoogleFonts.poppins(
+            style: AppText.poppins(
               fontSize: 12,
               color: AppColors.gold.withValues(alpha: 0.9),
             ),
@@ -242,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   'سورة الفاتحة',
-                  style: GoogleFonts.poppins(
+                  style: AppText.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: isDark ? AppColors.textLight : AppColors.textDark,
@@ -251,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 4),
                 Text(
                   'الآية 1 من 7',
-                  style: GoogleFonts.poppins(
+                  style: AppText.poppins(
                     fontSize: 12,
                     color: isDark ? Colors.white54 : AppColors.textMuted,
                   ),

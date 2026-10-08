@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_text.dart';
 import '../../core/theme/app_colors.dart';
 
 class ReaderScreen extends StatelessWidget {
@@ -36,7 +36,7 @@ class ReaderScreen extends StatelessWidget {
                   Text(
                     a.text,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.amiri(
+                    style: AppText.amiri(
                       fontSize: 26,
                       height: 2.0,
                       color:
@@ -56,7 +56,7 @@ class ReaderScreen extends StatelessWidget {
                       ),
                       child: Text(
                         '${a.number}',
-                        style: GoogleFonts.poppins(
+                        style: AppText.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: AppColors.gold,

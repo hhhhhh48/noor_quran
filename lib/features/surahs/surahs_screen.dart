@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_text.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/database/quran_repository.dart';
 import '../reader/reader_screen.dart';
@@ -19,7 +19,7 @@ class SurahsScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
             child: Text(
               'السور',
-              style: GoogleFonts.poppins(
+              style: AppText.poppins(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: isDark ? AppColors.goldSoft : AppColors.emerald,
@@ -74,7 +74,7 @@ class _SurahTile extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '${surah.id}',
-                    style: GoogleFonts.poppins(
+                    style: AppText.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.emerald,
@@ -89,7 +89,7 @@ class _SurahTile extends StatelessWidget {
                   children: [
                     Text(
                       surah.name,
-                      style: GoogleFonts.amiri(
+                      style: AppText.amiri(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color:
@@ -99,7 +99,7 @@ class _SurahTile extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       '${surah.englishName} • ${surah.ayahs.length} آيات',
-                      style: GoogleFonts.poppins(
+                      style: AppText.poppins(
                         fontSize: 12,
                         color:
                             isDark ? Colors.white54 : AppColors.textMuted,
