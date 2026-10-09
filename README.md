@@ -1,17 +1,29 @@
-# noor_quran
+# The Holy Quran / القرآن الكريم
 
-A new Flutter project.
+A free, open-source app to read the Holy Quran in 10 languages.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Complete Quran (114 surahs) with Uthmani script
+- 10 translations (English, French, Spanish, Russian, Turkish, Urdu, Bengali, Indonesian, Chinese, Swedish)
+- Tafsir in 3 languages (Arabic, English, Urdu)
+- Audio recitation with 8 famous reciters
+- Mushaf mode (continuous text)
+- Adhkar & Duas in 10 languages
+- Bookmarks with colors and notes
+- Search in Arabic and translations
+- Qibla direction + prayer times
+- Arabic + English interface
+- 100% offline for reading
 
-A few resources to get you started if this is your first Flutter project:
+## Download
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+[Latest APK](https://github.com/hhhhhh48/noor_quran/releases/latest)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Developer
+
+Mohamed Ouachmi - mohamedouachmi3@gmail.com
+
+## License
+
+MIT License - see [LICENSE](LICENSE)
