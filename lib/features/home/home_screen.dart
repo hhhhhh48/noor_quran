@@ -7,6 +7,7 @@ import '../../core/theme/app_text.dart';
 import '../../data/database/quran_repository.dart';
 import '../adhkar/adhkar_screen.dart';
 import '../bookmarks/bookmarks_screen.dart';
+import '../qibla/qibla_screen.dart';
 import '../reader/reader_screen.dart';
 import '../search/search_screen.dart';
 import '../settings/settings_screen.dart';
@@ -71,32 +72,38 @@ class _HomeScreenState extends State<HomeScreen> {
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined, size: 20),
-              selectedIcon: Icon(Icons.home_rounded, color: AppColors.emerald, size: 20),
+              selectedIcon:
+                  Icon(Icons.home_rounded, color: AppColors.emerald, size: 20),
               label: 'الرئيسية',
             ),
             NavigationDestination(
               icon: Icon(Icons.menu_book_outlined, size: 20),
-              selectedIcon: Icon(Icons.menu_book_rounded, color: AppColors.emerald, size: 20),
+              selectedIcon: Icon(Icons.menu_book_rounded,
+                  color: AppColors.emerald, size: 20),
               label: 'السور',
             ),
             NavigationDestination(
               icon: Icon(Icons.auto_awesome_outlined, size: 20),
-              selectedIcon: Icon(Icons.auto_awesome, color: AppColors.emerald, size: 20),
+              selectedIcon: Icon(Icons.auto_awesome,
+                  color: AppColors.emerald, size: 20),
               label: 'الأذكار',
             ),
             NavigationDestination(
               icon: Icon(Icons.search_outlined, size: 20),
-              selectedIcon: Icon(Icons.search_rounded, color: AppColors.emerald, size: 20),
+              selectedIcon: Icon(Icons.search_rounded,
+                  color: AppColors.emerald, size: 20),
               label: 'البحث',
             ),
             NavigationDestination(
               icon: Icon(Icons.bookmark_border_rounded, size: 20),
-              selectedIcon: Icon(Icons.bookmark_rounded, color: AppColors.emerald, size: 20),
+              selectedIcon: Icon(Icons.bookmark_rounded,
+                  color: AppColors.emerald, size: 20),
               label: 'مكتبتي',
             ),
             NavigationDestination(
               icon: Icon(Icons.settings_outlined, size: 20),
-              selectedIcon: Icon(Icons.settings_rounded, color: AppColors.emerald, size: 20),
+              selectedIcon: Icon(Icons.settings_rounded,
+                  color: AppColors.emerald, size: 20),
               label: 'الإعدادات',
             ),
           ],
@@ -124,6 +131,10 @@ class _HomeTab extends StatelessWidget {
           _sectionTitle('متابعة القراءة'),
           const SizedBox(height: 12),
           _continueCard(context),
+          const SizedBox(height: 24),
+          _sectionTitle('أدوات'),
+          const SizedBox(height: 12),
+          _quickActions(context),
         ],
       ),
     );
@@ -342,6 +353,82 @@ class _HomeTab extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _quickActions(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            child: InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const QiblaScreen()),
+              ),
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.nightCard : AppColors.creamCard,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppColors.gold.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const Icon(Icons.explore_rounded,
+                        color: AppColors.emerald, size: 28),
+                    const SizedBox(height: 8),
+                    Text(
+                      'القبلة',
+                      style: AppText.poppins(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isDark
+                            ? AppColors.textLight
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.nightCard : AppColors.creamCard,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: AppColors.gold.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Column(
+              children: [
+                const Icon(Icons.headphones_rounded,
+                    color: AppColors.emerald, size: 28),
+                const SizedBox(height: 8),
+                Text(
+                  'القراء',
+                  style: AppText.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color:
+                        isDark ? AppColors.textLight : AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
