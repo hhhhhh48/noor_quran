@@ -14,7 +14,8 @@ import 'features/splash/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await NotificationService.init();
+  // لا ننتظر الإشعارات — نتركها تعمل في الخلفية
+  NotificationService.init().catchError((_) {});
 
   final quranRepo = QuranRepository();
   await quranRepo.load();
