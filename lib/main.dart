@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/services/audio_service.dart';
-import 'core/services/notification_service.dart';
 import 'core/theme/app_text.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
@@ -13,9 +12,6 @@ import 'features/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // لا ننتظر الإشعارات — نتركها تعمل في الخلفية
-  NotificationService.init().catchError((_) {});
 
   final quranRepo = QuranRepository();
   await quranRepo.load();
