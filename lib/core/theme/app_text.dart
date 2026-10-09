@@ -9,6 +9,7 @@ class AppText {
     Color? color,
     double? height,
     double? letterSpacing,
+    FontStyle? fontStyle,
   }) =>
       TextStyle(
         fontFamily: 'Amiri',
@@ -17,6 +18,7 @@ class AppText {
         color: color,
         height: height,
         letterSpacing: letterSpacing,
+        fontStyle: fontStyle,
       );
 
   static TextStyle poppins({
@@ -25,6 +27,7 @@ class AppText {
     Color? color,
     double? height,
     double? letterSpacing,
+    FontStyle? fontStyle,
   }) =>
       TextStyle(
         fontFamily: 'Poppins',
@@ -33,5 +36,6 @@ class AppText {
         color: color,
         height: height,
         letterSpacing: letterSpacing,
+        fontStyle: fontStyle,
       );
 }
