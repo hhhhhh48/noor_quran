@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/i18n/strings.dart';
 import '../../core/services/bookmark_service.dart';
 import '../../core/services/storage_service.dart';
 import '../../core/theme/app_colors.dart';
@@ -52,6 +53,7 @@ class _BookmarksScreenState extends State<BookmarksScreen>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final repo = context.read<QuranRepository>();
+    final s = context.watch<S>();
 
     return SafeArea(
       bottom: false,
@@ -71,11 +73,12 @@ class _BookmarksScreenState extends State<BookmarksScreen>
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'مكتبتي',
+                  s.t('library'),
                   style: AppText.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                    color:
+                        isDark ? AppColors.textLight : AppColors.textPrimary,
                   ),
                 ),
               ],
@@ -103,8 +106,8 @@ class _BookmarksScreenState extends State<BookmarksScreen>
                   AppText.poppins(fontSize: 13, fontWeight: FontWeight.w600),
               unselectedLabelStyle: AppText.poppins(fontSize: 12),
               tabs: [
-                Tab(text: 'الإشارات (${_bookmarks.length})'),
-                Tab(text: 'المفضلة (${_favorites.length})'),
+                Tab(text: '${s.t('bookmarks')} (${_bookmarks.length})'),
+                Tab(text: '${s.t('favorites')} (${_favorites.length})'),
               ],
             ),
           ),
@@ -117,8 +120,8 @@ class _BookmarksScreenState extends State<BookmarksScreen>
                 : TabBarView(
                     controller: _tab,
                     children: [
-                      _buildBookmarks(isDark, repo),
-                      _buildFavorites(isDark, repo),
+                      _buildBookmarks(isDark, repo, s),
+                      _buildFavorites(isDark, repo, s),
                     ],
                   ),
           ),
@@ -127,10 +130,14 @@ class _BookmarksScreenState extends State<BookmarksScreen>
     );
   }
 
-  Widget _buildBookmarks(bool isDark, QuranRepository repo) {
+  Widget _buildBookmarks(bool isDark, QuranRepository repo, S s) {
     if (_bookmarks.isEmpty) {
-      return _empty(isDark, Icons.bookmark_border_rounded,
-          'لا توجد إشارات', 'اضغط 🔖 تحت أي آية');
+      return _empty(
+        isDark,
+        Icons.bookmark_border_rounded,
+        s.t('no_bookmarks'),
+        s.t('no_bookmarks_hint'),
+      );
     }
     return RefreshIndicator(
       onRefresh: _load,
@@ -138,15 +145,18 @@ class _BookmarksScreenState extends State<BookmarksScreen>
       child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
         itemCount: _bookmarks.length,
-        itemBuilder: (_, i) => _bmCard(_bookmarks[i], isDark, repo),
+        itemBuilder: (_, i) => _bmCard(_bookmarks[i], isDark, repo, s),
       ),
     );
   }
 
-  Widget _bmCard(Bookmark bm, bool isDark, QuranRepository repo) {
+  Widget _bmCard(Bookmark bm, bool isDark, QuranRepository repo, S s) {
     final color =
         Color(kBookmarkColors[bm.colorIndex % kBookmarkColors.length]);
     final surah = repo.byId(bm.surahId);
+    final surahName = s.isAr
+        ? bm.surahName
+        : (surah?.transliteration ?? bm.surahName);
 
     return Dismissible(
       key: ValueKey(bm.id),
@@ -183,7 +193,8 @@ class _BookmarksScreenState extends State<BookmarksScreen>
             decoration: BoxDecoration(
               color: isDark ? AppColors.nightCard : AppColors.creamCard,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
+              border:
+                  Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
               boxShadow: isDark ? null : AppShadows.cardLight,
             ),
             child: Column(
@@ -199,11 +210,12 @@ class _BookmarksScreenState extends State<BookmarksScreen>
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '${bm.surahName} • آية ${bm.ayahId}',
+                      '$surahName • ${s.t('ayah')} ${bm.ayahId}',
                       style: AppText.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.gold),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.gold,
+                      ),
                     ),
                   ],
                 ),
@@ -247,10 +259,14 @@ class _BookmarksScreenState extends State<BookmarksScreen>
     );
   }
 
-  Widget _buildFavorites(bool isDark, QuranRepository repo) {
+  Widget _buildFavorites(bool isDark, QuranRepository repo, S s) {
     if (_favorites.isEmpty) {
-      return _empty(isDark, Icons.favorite_border_rounded,
-          'لا توجد مفضلة', 'اضغط ❤️ تحت أي آية');
+      return _empty(
+        isDark,
+        Icons.favorite_border_rounded,
+        s.t('no_favorites'),
+        s.t('no_favorites_hint'),
+      );
     }
     return RefreshIndicator(
       onRefresh: _load,
@@ -258,16 +274,19 @@ class _BookmarksScreenState extends State<BookmarksScreen>
       child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
         itemCount: _favorites.length,
-        itemBuilder: (_, i) => _favCard(_favorites[i], isDark, repo),
+        itemBuilder: (_, i) => _favCard(_favorites[i], isDark, repo, s),
       ),
     );
   }
 
   Widget _favCard(
-      Map<String, dynamic> f, bool isDark, QuranRepository repo) {
+      Map<String, dynamic> f, bool isDark, QuranRepository repo, S s) {
     final sid = f['surah'] as int;
     final aid = f['ayah'] as int;
     final surah = repo.byId(sid);
+    final surahName = s.isAr
+        ? (f['surahName']?.toString() ?? '')
+        : (surah?.transliteration ?? f['surahName']?.toString() ?? '');
 
     return Dismissible(
       key: ValueKey('fav-$sid:$aid'),
@@ -324,7 +343,7 @@ class _BookmarksScreenState extends State<BookmarksScreen>
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  '${f['surahName']} • آية $aid',
+                  '$surahName • ${s.t('ayah')} $aid',
                   style:
                       AppText.poppins(fontSize: 11, color: AppColors.gold),
                 ),
@@ -356,9 +375,11 @@ class _BookmarksScreenState extends State<BookmarksScreen>
             const SizedBox(height: 6),
             Text(
               sub,
+              textAlign: TextAlign.center,
               style: AppText.poppins(
                 fontSize: 13,
-                color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                color:
+                    isDark ? AppColors.textMuted : AppColors.textSecondary,
               ),
             ),
           ],

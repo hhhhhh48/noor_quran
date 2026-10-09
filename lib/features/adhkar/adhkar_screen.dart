@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/i18n/strings.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_shadows.dart';
@@ -14,6 +15,7 @@ class AdhkarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final repo = context.watch<AdhkarRepository>();
+    final s = context.watch<S>();
 
     return SafeArea(
       bottom: false,
@@ -34,11 +36,12 @@ class AdhkarScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'الأذكار والأدعية',
+                  s.t('adhkar_duas'),
                   style: AppText.poppins(
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                    color:
+                        isDark ? AppColors.textLight : AppColors.textPrimary,
                   ),
                 ),
                 const Spacer(),
@@ -57,7 +60,9 @@ class AdhkarScreen extends StatelessWidget {
                             size: 16, color: AppColors.emerald),
                         const SizedBox(width: 6),
                         Text(
-                          AdhkarRepository.languageNames[repo.currentLanguage] ?? 'EN',
+                          AdhkarRepository
+                                  .languageNames[repo.currentLanguage] ??
+                              'EN',
                           style: AppText.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -74,15 +79,18 @@ class AdhkarScreen extends StatelessWidget {
           Expanded(
             child: !repo.isLoaded
                 ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.emerald))
+                    child:
+                        CircularProgressIndicator(color: AppColors.emerald))
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
                     itemCount: repo.categories.length,
                     itemBuilder: (_, i) {
                       return _CategoryCard(
-                          category: repo.categories[i],
-                          isDark: isDark,
-                          lang: repo.currentLanguage);
+                        category: repo.categories[i],
+                        isDark: isDark,
+                        lang: repo.currentLanguage,
+                        s: s,
+                      );
                     },
                   ),
           ),
@@ -92,6 +100,7 @@ class AdhkarScreen extends StatelessWidget {
   }
 
   void _showLangPicker(BuildContext context, AdhkarRepository repo) {
+    final s = context.read<S>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -99,7 +108,7 @@ class AdhkarScreen extends StatelessWidget {
       builder: (_) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
-          height: MediaQuery.of(context).size.height * 0.6,
+          height: MediaQuery.of(context).size.height * 0.7,
           decoration: BoxDecoration(
             color: isDark ? AppColors.nightCard : AppColors.creamCard,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
@@ -111,18 +120,20 @@ class AdhkarScreen extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                  color:
+                      isDark ? AppColors.textMuted : AppColors.textSecondary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Text(
-                  'اختر لغة الترجمة',
+                  s.t('translation_lang'),
                   style: AppText.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                    color:
+                        isDark ? AppColors.textLight : AppColors.textPrimary,
                   ),
                 ),
               ),
@@ -130,7 +141,8 @@ class AdhkarScreen extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: AdhkarRepository.languageNames.length,
                   itemBuilder: (_, i) {
-                    final code = AdhkarRepository.languageNames.keys.elementAt(i);
+                    final code =
+                        AdhkarRepository.languageNames.keys.elementAt(i);
                     final name = AdhkarRepository.languageNames[code]!;
                     final cur = code == repo.currentLanguage;
                     return ListTile(
@@ -140,7 +152,8 @@ class AdhkarScreen extends StatelessWidget {
                         name,
                         style: AppText.poppins(
                           fontSize: 16,
-                          fontWeight: cur ? FontWeight.bold : FontWeight.normal,
+                          fontWeight:
+                              cur ? FontWeight.bold : FontWeight.normal,
                           color: isDark
                               ? AppColors.textLight
                               : AppColors.textPrimary,
@@ -156,7 +169,7 @@ class AdhkarScreen extends StatelessWidget {
                         if (!ok && context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('الترجمة غير متوفرة',
+                              content: Text(s.t('not_available'),
                                   style: AppText.poppins()),
                             ),
                           );
@@ -178,23 +191,34 @@ class _CategoryCard extends StatelessWidget {
   final AdhkarCategory category;
   final bool isDark;
   final String lang;
+  final S s;
   const _CategoryCard({
     required this.category,
     required this.isDark,
     required this.lang,
+    required this.s,
   });
 
   IconData _iconFor(String name) {
     switch (name) {
-      case 'wb_sunny': return Icons.wb_sunny_rounded;
-      case 'nights_stay': return Icons.nights_stay_rounded;
-      case 'bedtime': return Icons.bedtime_rounded;
-      case 'wb_twilight': return Icons.wb_twilight_rounded;
-      case 'mosque': return Icons.mosque_rounded;
-      case 'volunteer_activism': return Icons.volunteer_activism_rounded;
-      case 'favorite': return Icons.favorite_rounded;
-      case 'healing': return Icons.healing_rounded;
-      default: return Icons.star_rounded;
+      case 'wb_sunny':
+        return Icons.wb_sunny_rounded;
+      case 'nights_stay':
+        return Icons.nights_stay_rounded;
+      case 'bedtime':
+        return Icons.bedtime_rounded;
+      case 'wb_twilight':
+        return Icons.wb_twilight_rounded;
+      case 'mosque':
+        return Icons.mosque_rounded;
+      case 'volunteer_activism':
+        return Icons.volunteer_activism_rounded;
+      case 'favorite':
+        return Icons.favorite_rounded;
+      case 'healing':
+        return Icons.healing_rounded;
+      default:
+        return Icons.star_rounded;
     }
   }
 
@@ -208,8 +232,11 @@ class _CategoryCard extends StatelessWidget {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) =>
-                AdhkarCategoryScreen(category: category, lang: lang),
+            builder: (_) => AdhkarCategoryScreen(
+              category: category,
+              lang: lang,
+              s: s,
+            ),
           ),
         ),
         child: Container(
@@ -248,7 +275,7 @@ class _CategoryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      category.title,
+                      s.isAr ? category.title : category.titleEn,
                       style: AppText.amiri(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -273,7 +300,8 @@ class _CategoryCard extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 14,
-                color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                color:
+                    isDark ? AppColors.textMuted : AppColors.textSecondary,
               ),
             ],
           ),
@@ -286,10 +314,12 @@ class _CategoryCard extends StatelessWidget {
 class AdhkarCategoryScreen extends StatelessWidget {
   final AdhkarCategory category;
   final String lang;
+  final S s;
   const AdhkarCategoryScreen({
     super.key,
     required this.category,
     required this.lang,
+    required this.s,
   });
 
   @override
@@ -309,7 +339,7 @@ class AdhkarCategoryScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          category.title,
+          s.isAr ? category.title : category.titleEn,
           style: AppText.amiri(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -325,6 +355,7 @@ class AdhkarCategoryScreen extends StatelessWidget {
           isDark: isDark,
           index: i + 1,
           showLocalized: lang != 'en',
+          s: s,
         ),
       ),
     );
@@ -336,11 +367,13 @@ class _AdhkarCard extends StatefulWidget {
   final bool isDark;
   final int index;
   final bool showLocalized;
+  final S s;
   const _AdhkarCard({
     required this.item,
     required this.isDark,
     required this.index,
     required this.showLocalized,
+    required this.s,
   });
 
   @override
@@ -354,6 +387,7 @@ class _AdhkarCardState extends State<_AdhkarCard> {
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
     final item = widget.item;
+    final s = widget.s;
     final done = _counter >= item.count;
 
     return Container(
@@ -363,9 +397,8 @@ class _AdhkarCardState extends State<_AdhkarCard> {
         color: isDark ? AppColors.nightCard : AppColors.creamCard,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: done
-              ? AppColors.emerald
-              : AppColors.gold.withValues(alpha: 0.15),
+          color:
+              done ? AppColors.emerald : AppColors.gold.withValues(alpha: 0.15),
           width: done ? 1.5 : 1,
         ),
       ),
@@ -445,7 +478,8 @@ class _AdhkarCardState extends State<_AdhkarCard> {
                 style: AppText.poppins(
                   fontSize: 14,
                   height: 1.7,
-                  color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                  color:
+                      isDark ? AppColors.textLight : AppColors.textPrimary,
                 ),
               ),
             ),
@@ -455,7 +489,8 @@ class _AdhkarCardState extends State<_AdhkarCard> {
               style: AppText.poppins(
                 fontSize: 12,
                 height: 1.6,
-                color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                color:
+                    isDark ? AppColors.textMuted : AppColors.textSecondary,
               ),
             ),
           ] else
@@ -490,7 +525,9 @@ class _AdhkarCardState extends State<_AdhkarCard> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      done ? 'تم' : '$_counter / ${item.count}',
+                      done
+                          ? s.t('done')
+                          : '${s.t('tap_to_count')} ($_counter / ${item.count})',
                       style: AppText.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,

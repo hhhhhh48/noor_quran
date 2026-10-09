@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/i18n/strings.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_shadows.dart';
@@ -26,9 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final repo = context.read<QuranRepository>();
+    final s = context.watch<S>();
 
     final pages = [
-      _HomeTab(isDark: isDark),
+      _HomeTab(isDark: isDark, s: s),
       SurahsScreen(repo: repo),
       const AdhkarScreen(),
       const SearchScreen(),
@@ -40,11 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: isDark ? AppColors.night : AppColors.cream,
       extendBody: true,
       body: IndexedStack(index: _tab, children: pages),
-      bottomNavigationBar: _nav(isDark),
+      bottomNavigationBar: _nav(isDark, s),
     );
   }
 
-  Widget _nav(bool isDark) {
+  Widget _nav(bool isDark, S s) {
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       decoration: BoxDecoration(
@@ -69,42 +71,36 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 64,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           indicatorColor: AppColors.emerald.withValues(alpha: 0.15),
-          destinations: const [
+          destinations: [
             NavigationDestination(
-              icon: Icon(Icons.home_outlined, size: 20),
-              selectedIcon:
-                  Icon(Icons.home_rounded, color: AppColors.emerald, size: 20),
-              label: 'الرئيسية',
+              icon: const Icon(Icons.home_outlined, size: 20),
+              selectedIcon: const Icon(Icons.home_rounded, color: AppColors.emerald, size: 20),
+              label: s.t('home'),
             ),
             NavigationDestination(
-              icon: Icon(Icons.menu_book_outlined, size: 20),
-              selectedIcon: Icon(Icons.menu_book_rounded,
-                  color: AppColors.emerald, size: 20),
-              label: 'السور',
+              icon: const Icon(Icons.menu_book_outlined, size: 20),
+              selectedIcon: const Icon(Icons.menu_book_rounded, color: AppColors.emerald, size: 20),
+              label: s.t('surahs'),
             ),
             NavigationDestination(
-              icon: Icon(Icons.auto_awesome_outlined, size: 20),
-              selectedIcon: Icon(Icons.auto_awesome,
-                  color: AppColors.emerald, size: 20),
-              label: 'الأذكار',
+              icon: const Icon(Icons.auto_awesome_outlined, size: 20),
+              selectedIcon: const Icon(Icons.auto_awesome, color: AppColors.emerald, size: 20),
+              label: s.t('adhkar'),
             ),
             NavigationDestination(
-              icon: Icon(Icons.search_outlined, size: 20),
-              selectedIcon: Icon(Icons.search_rounded,
-                  color: AppColors.emerald, size: 20),
-              label: 'البحث',
+              icon: const Icon(Icons.search_outlined, size: 20),
+              selectedIcon: const Icon(Icons.search_rounded, color: AppColors.emerald, size: 20),
+              label: s.t('search'),
             ),
             NavigationDestination(
-              icon: Icon(Icons.bookmark_border_rounded, size: 20),
-              selectedIcon: Icon(Icons.bookmark_rounded,
-                  color: AppColors.emerald, size: 20),
-              label: 'مكتبتي',
+              icon: const Icon(Icons.bookmark_border_rounded, size: 20),
+              selectedIcon: const Icon(Icons.bookmark_rounded, color: AppColors.emerald, size: 20),
+              label: s.t('library'),
             ),
             NavigationDestination(
-              icon: Icon(Icons.settings_outlined, size: 20),
-              selectedIcon: Icon(Icons.settings_rounded,
-                  color: AppColors.emerald, size: 20),
-              label: 'الإعدادات',
+              icon: const Icon(Icons.settings_outlined, size: 20),
+              selectedIcon: const Icon(Icons.settings_rounded, color: AppColors.emerald, size: 20),
+              label: s.t('settings'),
             ),
           ],
         ),
@@ -115,7 +111,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _HomeTab extends StatelessWidget {
   final bool isDark;
-  const _HomeTab({required this.isDark});
+  final S s;
+  const _HomeTab({required this.isDark, required this.s});
 
   @override
   Widget build(BuildContext context) {
@@ -128,11 +125,11 @@ class _HomeTab extends StatelessWidget {
           const SizedBox(height: 28),
           _verseOfDay(context),
           const SizedBox(height: 24),
-          _sectionTitle('متابعة القراءة'),
+          _sectionTitle(s.t('continue_reading')),
           const SizedBox(height: 12),
           _continueCard(context),
           const SizedBox(height: 24),
-          _sectionTitle('أدوات'),
+          _sectionTitle(s.t('tools')),
           const SizedBox(height: 12),
           _quickActions(context),
         ],
@@ -148,7 +145,7 @@ class _HomeTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'السلام عليكم',
+              s.t('salam'),
               style: AppText.poppins(
                 fontSize: 14,
                 color: isDark ? AppColors.textMuted : AppColors.textSecondary,
@@ -157,7 +154,7 @@ class _HomeTab extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'القرآن الكريم',
+              s.t('quran_kareem'),
               style: AppText.amiri(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -201,15 +198,12 @@ class _HomeTab extends StatelessWidget {
                     color: AppColors.gold.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
-                    Icons.auto_awesome,
-                    color: AppColors.goldBright,
-                    size: 18,
-                  ),
+                  child: const Icon(Icons.auto_awesome,
+                      color: AppColors.goldBright, size: 18),
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  'آية اليوم',
+                  s.t('ayah_of_day'),
                   style: AppText.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -238,7 +232,7 @@ class _HomeTab extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  'سورة طه • الآية ١١٤',
+                  'طه • ١١٤',
                   style: AppText.poppins(
                     fontSize: 12,
                     color: AppColors.goldBright.withValues(alpha: 0.9),
@@ -310,11 +304,8 @@ class _HomeTab extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: AppShadows.goldGlow,
                 ),
-                child: const Icon(
-                  Icons.bookmark_rounded,
-                  color: AppColors.emerald,
-                  size: 26,
-                ),
+                child: const Icon(Icons.bookmark_rounded,
+                    color: AppColors.emerald, size: 26),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -322,7 +313,9 @@ class _HomeTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      fatiha?.name ?? 'سورة الفاتحة',
+                      s.isAr
+                          ? (fatiha?.name ?? s.t('surah_fatiha'))
+                          : (fatiha?.transliteration ?? 'Al-Fatiha'),
                       style: AppText.amiri(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -333,7 +326,7 @@ class _HomeTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'اضغط للمتابعة',
+                      s.t('tap_to_continue'),
                       style: AppText.poppins(
                         fontSize: 12,
                         color: isDark
@@ -384,7 +377,7 @@ class _HomeTab extends StatelessWidget {
                         color: AppColors.emerald, size: 28),
                     const SizedBox(height: 8),
                     Text(
-                      'القبلة',
+                      s.t('qibla'),
                       style: AppText.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -416,12 +409,13 @@ class _HomeTab extends StatelessWidget {
                     color: AppColors.emerald, size: 28),
                 const SizedBox(height: 8),
                 Text(
-                  'القراء',
+                  s.t('reciters'),
                   style: AppText.poppins(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color:
-                        isDark ? AppColors.textLight : AppColors.textPrimary,
+                    color: isDark
+                        ? AppColors.textLight
+                        : AppColors.textPrimary,
                   ),
                 ),
               ],

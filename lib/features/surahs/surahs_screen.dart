@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../core/i18n/strings.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_shadows.dart';
@@ -13,6 +15,7 @@ class SurahsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final s = context.watch<S>();
     return SafeArea(
       bottom: false,
       child: Column(
@@ -32,27 +35,24 @@ class SurahsScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'السور',
+                  s.t('surahs'),
                   style: AppText.poppins(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
-                    color: isDark
-                        ? AppColors.textLight
-                        : AppColors.textPrimary,
+                    color:
+                        isDark ? AppColors.textLight : AppColors.textPrimary,
                   ),
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.emerald.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    '${repo.surahs.length} سورة',
+                    '${repo.surahs.length}',
                     style: AppText.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -72,7 +72,7 @@ class SurahsScreen extends StatelessWidget {
                 return _SurahTile(
                   surah: repo.surahs[i],
                   isDark: isDark,
-                  index: i,
+                  s: s,
                 );
               },
             ),
@@ -86,15 +86,18 @@ class SurahsScreen extends StatelessWidget {
 class _SurahTile extends StatelessWidget {
   final dynamic surah;
   final bool isDark;
-  final int index;
+  final S s;
   const _SurahTile({
     required this.surah,
     required this.isDark,
-    required this.index,
+    required this.s,
   });
 
   @override
   Widget build(BuildContext context) {
+    final name = s.isAr ? surah.name : surah.transliteration;
+    final type = surah.type == 'meccan' ? s.t('meccan') : s.t('medinan');
+
     return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(20),
@@ -134,9 +137,8 @@ class _SurahTile extends StatelessWidget {
                     style: AppText.poppins(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: isDark
-                          ? AppColors.emerald
-                          : AppColors.goldSoft,
+                      color:
+                          isDark ? AppColors.emerald : AppColors.goldSoft,
                     ),
                   ),
                 ),
@@ -147,7 +149,7 @@ class _SurahTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      surah.name,
+                      name,
                       style: AppText.amiri(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -158,7 +160,7 @@ class _SurahTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${surah.transliteration} • ${surah.totalVerses} آيات',
+                      '$type • ${surah.totalVerses} ${s.t('ayahs')}',
                       style: AppText.poppins(
                         fontSize: 11,
                         color: isDark
@@ -172,9 +174,8 @@ class _SurahTile extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 14,
-                color: isDark
-                    ? AppColors.textMuted
-                    : AppColors.textSecondary,
+                color:
+                    isDark ? AppColors.textMuted : AppColors.textSecondary,
               ),
             ],
           ),

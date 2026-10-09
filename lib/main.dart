@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'core/i18n/strings.dart';
 import 'core/services/audio_service.dart';
 import 'core/theme/app_text.dart';
 import 'core/theme/app_theme.dart';
@@ -12,6 +13,8 @@ import 'features/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final s = await S.create();
 
   final quranRepo = QuranRepository();
   await quranRepo.load();
@@ -28,12 +31,13 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<S>.value(value: s),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider<TranslationRepository>.value(value: transRepo),
+        ChangeNotifierProvider<AdhkarRepository>.value(value: adhkarRepo),
         ChangeNotifierProvider<AudioService>.value(value: AudioService.instance),
         Provider<QuranRepository>.value(value: quranRepo),
         Provider<TafsirRepository>.value(value: tafsirRepo),
-        Provider<AdhkarRepository>.value(value: adhkarRepo),
       ],
       child: const QuranKareemApp(),
     ),
@@ -46,15 +50,16 @@ class QuranKareemApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tp = Provider.of<ThemeProvider>(context);
+    final s = Provider.of<S>(context);
     AppText.scale = tp.fontSize;
 
     return MaterialApp(
-      title: 'القرآن الكريم',
+      title: s.isAr ? 'القرآن الكريم' : 'The Holy Quran',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: tp.themeMode,
-      locale: const Locale('ar'),
+      locale: Locale(s.lang),
       home: const SplashScreen(),
     );
   }

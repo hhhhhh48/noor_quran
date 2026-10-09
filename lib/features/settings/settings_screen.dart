@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/i18n/strings.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_shadows.dart';
@@ -16,94 +17,148 @@ class SettingsScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final tp = context.watch<ThemeProvider>();
     final transRepo = context.watch<TranslationRepository>();
+    final s = context.watch<S>();
 
     return SafeArea(
       bottom: false,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 120),
         children: [
-          _header(isDark),
+          _header(s.t('settings'), isDark),
           const SizedBox(height: 24),
-          _sectionTitle('المظهر', isDark),
+          _sectionTitle(s.t('app_lang'), isDark),
           const SizedBox(height: 10),
-          _themeSelector(tp, isDark),
+          _appLangSelector(s, isDark),
           const SizedBox(height: 24),
-          _sectionTitle('حجم الخط', isDark),
+          _sectionTitle(s.t('appearance'), isDark),
+          const SizedBox(height: 10),
+          _themeSelector(tp, s, isDark),
+          const SizedBox(height: 24),
+          _sectionTitle(s.t('font_size'), isDark),
           const SizedBox(height: 10),
           _fontSizeSlider(tp, isDark),
           const SizedBox(height: 24),
-          _sectionTitle('لغة الترجمة الافتراضية', isDark),
+          _sectionTitle(s.t('default_lang'), isDark),
           const SizedBox(height: 10),
           _defaultLangSelector(tp, transRepo, isDark),
           const SizedBox(height: 24),
-          _sectionTitle('حول التطبيق', isDark),
+          _sectionTitle(s.t('about'), isDark),
           const SizedBox(height: 10),
-          _aboutCard(isDark),
+          _aboutCard(s, isDark),
         ],
       ),
     );
   }
 
-  Widget _header(bool isDark) {
-    return Row(
-      children: [
-        Container(
-          width: 4,
-          height: 24,
-          decoration: BoxDecoration(
-            color: AppColors.gold,
-            borderRadius: BorderRadius.circular(2),
+  Widget _header(String text, bool isDark) => Row(
+        children: [
+          Container(
+            width: 4,
+            height: 24,
+            decoration: BoxDecoration(
+              color: AppColors.gold,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          'الإعدادات',
-          style: AppText.poppins(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-            color: isDark ? AppColors.textLight : AppColors.textPrimary,
+          const SizedBox(width: 12),
+          Text(
+            text,
+            style: AppText.poppins(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+            ),
           ),
+        ],
+      );
+
+  Widget _sectionTitle(String text, bool isDark) => Text(
+        text,
+        style: AppText.poppins(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+          letterSpacing: 0.8,
         ),
-      ],
-    );
-  }
+      );
 
-  Widget _sectionTitle(String text, bool isDark) {
-    return Text(
-      text,
-      style: AppText.poppins(
-        fontSize: 13,
-        fontWeight: FontWeight.w600,
-        color: isDark ? AppColors.textMuted : AppColors.textSecondary,
-        letterSpacing: 0.8,
-      ),
-    );
-  }
-
-  Widget _card({required bool isDark, required Widget child}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.nightCard : AppColors.creamCard,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.03),
+  Widget _card({required bool isDark, required Widget child}) => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.nightCard : AppColors.creamCard,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.black.withValues(alpha: 0.03),
+          ),
+          boxShadow: isDark ? null : AppShadows.cardLight,
         ),
-        boxShadow: isDark ? null : AppShadows.cardLight,
-      ),
-      child: child,
-    );
-  }
+        child: child,
+      );
 
-  Widget _themeSelector(ThemeProvider tp, bool isDark) {
+  Widget _appLangSelector(S s, bool isDark) {
     final options = [
-      (ThemeMode.light, Icons.light_mode_rounded, 'فاتح'),
-      (ThemeMode.system, Icons.brightness_auto_rounded, 'تلقائي'),
-      (ThemeMode.dark, Icons.dark_mode_rounded, 'ليلي'),
+      ('ar', 'العربية', 'Arabic'),
+      ('en', 'English', 'الإنجليزية'),
     ];
+    return _card(
+      isDark: isDark,
+      child: Row(
+        children: options.map((o) {
+          final sel = s.lang == o.$1;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => s.setLang(o.$1),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                  color: sel ? AppColors.emerald : Colors.transparent,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      o.$2,
+                      style: AppText.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: sel
+                            ? Colors.white
+                            : (isDark
+                                ? AppColors.textLight
+                                : AppColors.textPrimary),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      o.$3,
+                      style: AppText.poppins(
+                        fontSize: 11,
+                        color: sel
+                            ? Colors.white70
+                            : (isDark
+                                ? AppColors.textMuted
+                                : AppColors.textSecondary),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
 
+  Widget _themeSelector(ThemeProvider tp, S s, bool isDark) {
+    final options = [
+      (ThemeMode.light, Icons.light_mode_rounded, s.t('light')),
+      (ThemeMode.system, Icons.brightness_auto_rounded, s.t('auto')),
+      (ThemeMode.dark, Icons.dark_mode_rounded, s.t('dark')),
+    ];
     return _card(
       isDark: isDark,
       child: Row(
@@ -121,15 +176,13 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      o.$2,
-                      size: 22,
-                      color: selected
-                          ? Colors.white
-                          : (isDark
-                              ? AppColors.textMuted
-                              : AppColors.textSecondary),
-                    ),
+                    Icon(o.$2,
+                        size: 22,
+                        color: selected
+                            ? Colors.white
+                            : (isDark
+                                ? AppColors.textMuted
+                                : AppColors.textSecondary)),
                     const SizedBox(height: 6),
                     Text(
                       o.$3,
@@ -160,15 +213,12 @@ class SettingsScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                'أ',
-                style: AppText.poppins(
-                  fontSize: 14,
-                  color: isDark
-                      ? AppColors.textMuted
-                      : AppColors.textSecondary,
-                ),
-              ),
+              Text('A',
+                  style: AppText.poppins(
+                      fontSize: 14,
+                      color: isDark
+                          ? AppColors.textMuted
+                          : AppColors.textSecondary)),
               Expanded(
                 child: Slider(
                   value: tp.fontSize,
@@ -180,16 +230,13 @@ class SettingsScreen extends StatelessWidget {
                   onChanged: (v) => tp.setFontSize(v),
                 ),
               ),
-              Text(
-                'أ',
-                style: AppText.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: isDark
-                      ? AppColors.textLight
-                      : AppColors.textPrimary,
-                ),
-              ),
+              Text('A',
+                  style: AppText.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: isDark
+                          ? AppColors.textLight
+                          : AppColors.textPrimary)),
             ],
           ),
           const SizedBox(height: 8),
@@ -228,10 +275,8 @@ class SettingsScreen extends StatelessWidget {
             },
             borderRadius: BorderRadius.circular(12),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 12,
-              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               child: Row(
                 children: [
                   Container(
@@ -254,9 +299,8 @@ class SettingsScreen extends StatelessWidget {
                               width: 12,
                               height: 12,
                               decoration: const BoxDecoration(
-                                color: AppColors.emerald,
-                                shape: BoxShape.circle,
-                              ),
+                                  color: AppColors.emerald,
+                                  shape: BoxShape.circle),
                             ),
                           )
                         : null,
@@ -299,7 +343,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _aboutCard(bool isDark) {
+  Widget _aboutCard(S s, bool isDark) {
     return _card(
       isDark: isDark,
       child: Column(
@@ -314,18 +358,15 @@ class SettingsScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: AppGradients.goldShine,
                 ),
-                child: const Icon(
-                  Icons.menu_book_rounded,
-                  color: AppColors.emerald,
-                  size: 24,
-                ),
+                child: const Icon(Icons.menu_book_rounded,
+                    color: AppColors.emerald, size: 24),
               ),
               const SizedBox(width: 14),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'القرآن الكريم',
+                    s.t('quran_kareem'),
                     style: AppText.amiri(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -335,7 +376,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'الإصدار ١.٠.٠',
+                    '${s.t('version')} 1.0.0',
                     style: AppText.poppins(
                       fontSize: 11,
                       color: isDark
@@ -351,8 +392,7 @@ class SettingsScreen extends StatelessWidget {
           Container(height: 1, color: AppColors.gold.withValues(alpha: 0.15)),
           const SizedBox(height: 16),
           Text(
-            'تطبيق مجاني لقراءة القرآن الكريم بـ 10 لغات عالمية.\n'
-            'يعمل بدون إنترنت تماماً.',
+            s.t('description'),
             style: AppText.poppins(
               fontSize: 13,
               height: 1.7,
@@ -364,26 +404,21 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              Icon(
-                Icons.person_rounded,
-                size: 18,
-                color: isDark ? AppColors.goldSoft : AppColors.emerald,
-              ),
+              Icon(Icons.person_rounded,
+                  size: 18,
+                  color: isDark ? AppColors.goldSoft : AppColors.emerald),
               const SizedBox(width: 8),
-              Text(
-                'تطوير',
-                style: AppText.poppins(
-                  fontSize: 12,
-                  color: isDark
-                      ? AppColors.textMuted
-                      : AppColors.textSecondary,
-                ),
-              ),
+              Text(s.t('developed_by'),
+                  style: AppText.poppins(
+                      fontSize: 12,
+                      color: isDark
+                          ? AppColors.textMuted
+                          : AppColors.textSecondary)),
             ],
           ),
           const SizedBox(height: 4),
           Text(
-            'محمد واشمي',
+            'Mohamed Ouachmi',
             style: AppText.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -393,11 +428,9 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(
-                Icons.email_rounded,
-                size: 16,
-                color: isDark ? AppColors.goldSoft : AppColors.emerald,
-              ),
+              Icon(Icons.email_rounded,
+                  size: 16,
+                  color: isDark ? AppColors.goldSoft : AppColors.emerald),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -410,20 +443,6 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 18),
-          Container(height: 1, color: AppColors.gold.withValues(alpha: 0.15)),
-          const SizedBox(height: 16),
-          Center(
-            child: Text(
-              '﴿ إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ ﴾',
-              textAlign: TextAlign.center,
-              style: AppText.amiri(
-                fontSize: 16,
-                height: 1.9,
-                color: isDark ? AppColors.goldSoft : AppColors.emerald,
-              ),
-            ),
           ),
         ],
       ),
