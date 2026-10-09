@@ -169,7 +169,7 @@ class SettingsScreen extends StatelessWidget {
                   min: 0.8,
                   max: 1.5,
                   divisions: 7,
-                  activeThumbColor: AppColors.emerald,
+                  activeColor: AppColors.emerald,
                   inactiveColor: AppColors.emerald.withValues(alpha: 0.2),
                   onChanged: (v) => tp.setFontSize(v),
                 ),
