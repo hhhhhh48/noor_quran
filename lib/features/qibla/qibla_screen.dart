@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/services/location_service.dart';
 import '../../core/services/prayer_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
@@ -11,14 +12,36 @@ class QiblaScreen extends StatefulWidget {
 }
 
 class _QiblaScreenState extends State<QiblaScreen> {
-  static const double _lat = 21.4225;
-  static const double _lng = 39.8262;
+  bool _loading = true;
+  bool _failed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _detect();
+  }
+
+  Future<void> _detect() async {
+    setState(() {
+      _loading = true;
+      _failed = false;
+    });
+    final ok = await LocationService.detect();
+    if (mounted) {
+      setState(() {
+        _loading = false;
+        _failed = !ok;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final qibla = PrayerService.qiblaDirection(_lat, _lng);
-    final times = PrayerService.calculate(lat: _lat, lng: _lng);
+    final lat = LocationService.lat ?? 21.4225;
+    final lng = LocationService.lng ?? 39.8262;
+    final qibla = PrayerService.qiblaDirection(lat, lng);
+    final times = PrayerService.calculate(lat: lat, lng: lng);
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.night : AppColors.cream,
@@ -32,67 +55,110 @@ class _QiblaScreenState extends State<QiblaScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'القبلة وأوقات الصلاة',
+          'Qibla & Prayer Times',
           style: AppText.poppins(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
             color: isDark ? AppColors.textLight : AppColors.textPrimary,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh_rounded,
+                color: isDark ? AppColors.goldSoft : AppColors.emerald),
+            onPressed: _detect,
+          ),
+        ],
       ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-          children: [
-            _qiblaCard(isDark, qibla),
-            const SizedBox(height: 24),
-            Text(
-              'أوقات الصلاة',
-              style: AppText.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDark ? AppColors.textLight : AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _tile('الفجر', times.fajr, Icons.nightlight_round, isDark),
-            _tile('الشروق', times.sunrise, Icons.wb_sunny_outlined, isDark),
-            _tile('الظهر', times.dhuhr, Icons.wb_sunny, isDark),
-            _tile('العصر', times.asr, Icons.wb_twilight, isDark),
-            _tile('المغرب', times.maghrib, Icons.nights_stay, isDark),
-            _tile('العشاء', times.isha, Icons.bedtime, isDark),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.nightCard : AppColors.creamCard,
-                borderRadius: BorderRadius.circular(16),
-                border:
-                    Border.all(color: AppColors.gold.withValues(alpha: 0.2)),
-              ),
-              child: Row(
+      body: _loading
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.emerald))
+          : SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                 children: [
-                  Icon(Icons.info_outline_rounded,
-                      size: 18,
-                      color: isDark ? AppColors.goldSoft : AppColors.emerald),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'الموقع الحالي: مكة المكرمة (افتراضي).',
-                      style: AppText.poppins(
-                        fontSize: 12,
-                        height: 1.6,
-                        color: isDark
-                            ? AppColors.textMuted
-                            : AppColors.textSecondary,
-                      ),
+                  _locationBar(isDark),
+                  const SizedBox(height: 16),
+                  _qiblaCard(isDark, qibla),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Prayer Times',
+                    style: AppText.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color:
+                          isDark ? AppColors.textLight : AppColors.textPrimary,
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  _tile('Fajr', times.fajr, Icons.nightlight_round, isDark),
+                  _tile('Sunrise', times.sunrise, Icons.wb_sunny_outlined, isDark),
+                  _tile('Dhuhr', times.dhuhr, Icons.wb_sunny, isDark),
+                  _tile('Asr', times.asr, Icons.wb_twilight, isDark),
+                  _tile('Maghrib', times.maghrib, Icons.nights_stay, isDark),
+                  _tile('Isha', times.isha, Icons.bedtime, isDark),
+                  const SizedBox(height: 20),
+                  if (_failed)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color: Colors.red.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.wifi_off_rounded,
+                              color: Colors.red, size: 20),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Could not detect your location. Using Makkah as default. Turn on internet and tap refresh.',
+                              style: AppText.poppins(
+                                fontSize: 12,
+                                height: 1.5,
+                                color: isDark
+                                    ? AppColors.textLight
+                                    : AppColors.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),
-          ],
-        ),
+    );
+  }
+
+  Widget _locationBar(bool isDark) {
+    final city = LocationService.city ?? 'Makkah';
+    final country = LocationService.country ?? 'Saudi Arabia';
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.emerald.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.emerald.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.location_on_rounded,
+              color: AppColors.emerald, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              '$city, $country',
+              style: AppText.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isDark ? AppColors.textLight : AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -114,12 +180,12 @@ class _QiblaScreenState extends State<QiblaScreen> {
       child: Column(
         children: [
           Text(
-            'اتجاه القبلة',
+            'QIBLA DIRECTION',
             style: AppText.poppins(
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: AppColors.goldSoft,
-              letterSpacing: 0.5,
+              letterSpacing: 2,
             ),
           ),
           const SizedBox(height: 20),
@@ -205,7 +271,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            'من الشمال',
+            'from North',
             style: AppText.poppins(fontSize: 12, color: AppColors.goldSoft),
           ),
         ],
@@ -213,8 +279,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
     );
   }
 
-  Widget _tile(
-      String name, DateTime time, IconData icon, bool isDark) {
+  Widget _tile(String name, DateTime time, IconData icon, bool isDark) {
     final hh = time.hour.toString().padLeft(2, '0');
     final mm = time.minute.toString().padLeft(2, '0');
     return Container(
