@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/services/audio_service.dart';
+import 'core/services/notification_service.dart';
 import 'core/theme/app_text.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
@@ -12,6 +13,8 @@ import 'features/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await NotificationService.init();
 
   final quranRepo = QuranRepository();
   await quranRepo.load();
@@ -30,10 +33,10 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider<TranslationRepository>.value(value: transRepo),
+        ChangeNotifierProvider<AdhkarRepository>.value(value: adhkarRepo),
         ChangeNotifierProvider<AudioService>.value(value: AudioService.instance),
         Provider<QuranRepository>.value(value: quranRepo),
         Provider<TafsirRepository>.value(value: tafsirRepo),
-        Provider<AdhkarRepository>.value(value: adhkarRepo),
       ],
       child: const QuranKareemApp(),
     ),

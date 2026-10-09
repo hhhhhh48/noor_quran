@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/services/notification_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/theme/theme_provider.dart';
+import '../../data/daily_ayahs.dart';
 import '../../data/database/translation_repository.dart';
 import '../../data/models/translation.dart';
 
@@ -36,6 +38,10 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 10),
           _defaultLangSelector(tp, transRepo, isDark),
           const SizedBox(height: 24),
+          _sectionTitle('إشعار آية اليوم', isDark),
+          const SizedBox(height: 10),
+          _notificationCard(context, isDark),
+          const SizedBox(height: 24),
           _sectionTitle('حول التطبيق', isDark),
           const SizedBox(height: 10),
           _aboutCard(isDark),
@@ -44,58 +50,52 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _header(bool isDark) {
-    return Row(
-      children: [
-        Container(
-          width: 4,
-          height: 24,
-          decoration: BoxDecoration(
-            color: AppColors.gold,
-            borderRadius: BorderRadius.circular(2),
+  Widget _header(bool isDark) => Row(
+        children: [
+          Container(
+            width: 4,
+            height: 24,
+            decoration: BoxDecoration(
+              color: AppColors.gold,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          'الإعدادات',
-          style: AppText.poppins(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-            color: isDark ? AppColors.textLight : AppColors.textPrimary,
+          const SizedBox(width: 12),
+          Text(
+            'الإعدادات',
+            style: AppText.poppins(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+            ),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
 
-  Widget _sectionTitle(String text, bool isDark) {
-    return Text(
-      text,
-      style: AppText.poppins(
-        fontSize: 13,
-        fontWeight: FontWeight.w600,
-        color: isDark ? AppColors.textMuted : AppColors.textSecondary,
-        letterSpacing: 0.8,
-      ),
-    );
-  }
-
-  Widget _card({required bool isDark, required Widget child}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.nightCard : AppColors.creamCard,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.03),
+  Widget _sectionTitle(String text, bool isDark) => Text(
+        text,
+        style: AppText.poppins(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+          letterSpacing: 0.8,
         ),
-        boxShadow: isDark ? null : AppShadows.cardLight,
-      ),
-      child: child,
-    );
-  }
+      );
+
+  Widget _card({required bool isDark, required Widget child}) => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.nightCard : AppColors.creamCard,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.black.withValues(alpha: 0.03),
+          ),
+          boxShadow: isDark ? null : AppShadows.cardLight,
+        ),
+        child: child,
+      );
 
   Widget _themeSelector(ThemeProvider tp, bool isDark) {
     final options = [
@@ -103,7 +103,6 @@ class SettingsScreen extends StatelessWidget {
       (ThemeMode.system, Icons.brightness_auto_rounded, 'تلقائي'),
       (ThemeMode.dark, Icons.dark_mode_rounded, 'ليلي'),
     ];
-
     return _card(
       isDark: isDark,
       child: Row(
@@ -121,15 +120,13 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      o.$2,
-                      size: 22,
-                      color: selected
-                          ? Colors.white
-                          : (isDark
-                              ? AppColors.textMuted
-                              : AppColors.textSecondary),
-                    ),
+                    Icon(o.$2,
+                        size: 22,
+                        color: selected
+                            ? Colors.white
+                            : (isDark
+                                ? AppColors.textMuted
+                                : AppColors.textSecondary)),
                     const SizedBox(height: 6),
                     Text(
                       o.$3,
@@ -160,15 +157,12 @@ class SettingsScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                'أ',
-                style: AppText.poppins(
-                  fontSize: 14,
-                  color: isDark
-                      ? AppColors.textMuted
-                      : AppColors.textSecondary,
-                ),
-              ),
+              Text('أ',
+                  style: AppText.poppins(
+                      fontSize: 14,
+                      color: isDark
+                          ? AppColors.textMuted
+                          : AppColors.textSecondary)),
               Expanded(
                 child: Slider(
                   value: tp.fontSize,
@@ -180,16 +174,13 @@ class SettingsScreen extends StatelessWidget {
                   onChanged: (v) => tp.setFontSize(v),
                 ),
               ),
-              Text(
-                'أ',
-                style: AppText.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: isDark
-                      ? AppColors.textLight
-                      : AppColors.textPrimary,
-                ),
-              ),
+              Text('أ',
+                  style: AppText.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: isDark
+                          ? AppColors.textLight
+                          : AppColors.textPrimary)),
             ],
           ),
           const SizedBox(height: 8),
@@ -228,10 +219,8 @@ class SettingsScreen extends StatelessWidget {
             },
             borderRadius: BorderRadius.circular(12),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 12,
-              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               child: Row(
                 children: [
                   Container(
@@ -254,9 +243,8 @@ class SettingsScreen extends StatelessWidget {
                               width: 12,
                               height: 12,
                               decoration: const BoxDecoration(
-                                color: AppColors.emerald,
-                                shape: BoxShape.circle,
-                              ),
+                                  color: AppColors.emerald,
+                                  shape: BoxShape.circle),
                             ),
                           )
                         : null,
@@ -299,6 +287,149 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  Widget _notificationCard(BuildContext context, bool isDark) {
+    return _card(
+      isDark: isDark,
+      child: Column(
+        children: [
+          FutureBuilder<bool>(
+            future: NotificationService.isEnabled(),
+            builder: (ctx, snap) {
+              final enabled = snap.data ?? false;
+              return Row(
+                children: [
+                  Icon(
+                    enabled
+                        ? Icons.notifications_active_rounded
+                        : Icons.notifications_off_rounded,
+                    color: enabled
+                        ? AppColors.emerald
+                        : (isDark
+                            ? AppColors.textMuted
+                            : AppColors.textSecondary),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          enabled ? 'الإشعار مفعّل' : 'الإشعار معطّل',
+                          style: AppText.poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.textLight
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                        Text(
+                          'آية قرآنية يومية',
+                          style: AppText.poppins(
+                            fontSize: 11,
+                            color: isDark
+                                ? AppColors.textMuted
+                                : AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Switch(
+                    value: enabled,
+                    activeColor: AppColors.emerald,
+                    onChanged: (v) async {
+                      if (v) {
+                        final h = await NotificationService.getHour();
+                        final m = await NotificationService.getMinute();
+                        final ayah = kDailyAyahs[
+                            DateTime.now().day % kDailyAyahs.length];
+                        await NotificationService.scheduleDaily(
+                          title: ayah.$1,
+                          body: '${ayah.$2} — ${ayah.$3}',
+                          hour: h,
+                          minute: m,
+                        );
+                      } else {
+                        await NotificationService.cancelDaily();
+                      }
+                      if (ctx.mounted) {
+                        (ctx as Element).markNeedsBuild();
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+          Container(height: 1, color: AppColors.gold.withValues(alpha: 0.1)),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text(
+                'الوقت:',
+                style: AppText.poppins(
+                  fontSize: 13,
+                  color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              FutureBuilder<int>(
+                future: NotificationService.getHour(),
+                builder: (ctx, snapH) {
+                  final h = snapH.data ?? 8;
+                  return FutureBuilder<int>(
+                    future: NotificationService.getMinute(),
+                    builder: (ctx2, snapM) {
+                      final m = snapM.data ?? 0;
+                      return OutlinedButton.icon(
+                        onPressed: () async {
+                          final picked = await showTimePicker(
+                            context: ctx2,
+                            initialTime: TimeOfDay(hour: h, minute: m),
+                          );
+                          if (picked != null) {
+                            await NotificationService.setTime(
+                                picked.hour, picked.minute);
+                            final enabled =
+                                await NotificationService.isEnabled();
+                            if (enabled) {
+                              final ayah = kDailyAyahs[
+                                  DateTime.now().day % kDailyAyahs.length];
+                              await NotificationService.scheduleDaily(
+                                title: ayah.$1,
+                                body: '${ayah.$2} — ${ayah.$3}',
+                                hour: picked.hour,
+                                minute: picked.minute,
+                              );
+                            }
+                            if (ctx2.mounted) {
+                              (ctx2 as Element).markNeedsBuild();
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.access_time_rounded,
+                            size: 18, color: AppColors.emerald),
+                        label: Text(
+                          '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}',
+                          style: AppText.poppins(
+                            color: AppColors.emerald,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _aboutCard(bool isDark) {
     return _card(
       isDark: isDark,
@@ -314,11 +445,8 @@ class SettingsScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: AppGradients.goldShine,
                 ),
-                child: const Icon(
-                  Icons.menu_book_rounded,
-                  color: AppColors.emerald,
-                  size: 24,
-                ),
+                child: const Icon(Icons.menu_book_rounded,
+                    color: AppColors.emerald, size: 24),
               ),
               const SizedBox(width: 14),
               Column(
@@ -351,8 +479,7 @@ class SettingsScreen extends StatelessWidget {
           Container(height: 1, color: AppColors.gold.withValues(alpha: 0.15)),
           const SizedBox(height: 16),
           Text(
-            'تطبيق مجاني لقراءة القرآن الكريم بـ 10 لغات عالمية.\n'
-            'يعمل بدون إنترنت تماماً.',
+            'تطبيق مجاني لقراءة القرآن الكريم بـ 10 لغات عالمية.\nيعمل بدون إنترنت تماماً.',
             style: AppText.poppins(
               fontSize: 13,
               height: 1.7,
@@ -364,21 +491,16 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              Icon(
-                Icons.person_rounded,
-                size: 18,
-                color: isDark ? AppColors.goldSoft : AppColors.emerald,
-              ),
+              Icon(Icons.person_rounded,
+                  size: 18,
+                  color: isDark ? AppColors.goldSoft : AppColors.emerald),
               const SizedBox(width: 8),
-              Text(
-                'تطوير',
-                style: AppText.poppins(
-                  fontSize: 12,
-                  color: isDark
-                      ? AppColors.textMuted
-                      : AppColors.textSecondary,
-                ),
-              ),
+              Text('تطوير',
+                  style: AppText.poppins(
+                      fontSize: 12,
+                      color: isDark
+                          ? AppColors.textMuted
+                          : AppColors.textSecondary)),
             ],
           ),
           const SizedBox(height: 4),
@@ -393,11 +515,9 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(
-                Icons.email_rounded,
-                size: 16,
-                color: isDark ? AppColors.goldSoft : AppColors.emerald,
-              ),
+              Icon(Icons.email_rounded,
+                  size: 16,
+                  color: isDark ? AppColors.goldSoft : AppColors.emerald),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
