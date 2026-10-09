@@ -169,7 +169,7 @@ class SettingsScreen extends StatelessWidget {
                   min: 0.8,
                   max: 1.5,
                   divisions: 7,
-                  activeColor: AppColors.emerald,
+                  activeThumbColor: AppColors.emerald,
                   inactiveColor: AppColors.emerald.withValues(alpha: 0.2),
                   onChanged: (v) => tp.setFontSize(v),
                 ),
@@ -337,7 +337,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   Switch(
                     value: enabled,
-                    activeColor: AppColors.emerald,
+                    activeThumbColor: AppColors.emerald,
                     onChanged: (v) async {
                       if (v) {
                         final h = await NotificationService.getHour();
