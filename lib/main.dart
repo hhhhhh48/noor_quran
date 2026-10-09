@@ -4,6 +4,7 @@ import 'core/services/audio_service.dart';
 import 'core/theme/app_text.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
+import 'data/database/adhkar_repository.dart';
 import 'data/database/quran_repository.dart';
 import 'data/database/tafsir_repository.dart';
 import 'data/database/translation_repository.dart';
@@ -21,6 +22,9 @@ void main() async {
   final tafsirRepo = TafsirRepository();
   await tafsirRepo.load();
 
+  final adhkarRepo = AdhkarRepository();
+  await adhkarRepo.load();
+
   runApp(
     MultiProvider(
       providers: [
@@ -29,6 +33,7 @@ void main() async {
         ChangeNotifierProvider<AudioService>.value(value: AudioService.instance),
         Provider<QuranRepository>.value(value: quranRepo),
         Provider<TafsirRepository>.value(value: tafsirRepo),
+        Provider<AdhkarRepository>.value(value: adhkarRepo),
       ],
       child: const QuranKareemApp(),
     ),

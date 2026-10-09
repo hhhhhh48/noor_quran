@@ -1,0 +1,257 @@
+{
+ "categories": [
+  {
+   "id": "morning",
+   "title": "أذكار الصباح",
+   "titleEn": "Morning Adhkar",
+   "icon": "wb_sunny",
+   "items": [
+    {
+     "ar": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
+     "tr": "Asbahna wa asbahal-mulku lillah, walhamdulillah, la ilaha illallah wahdahu la sharika lah",
+     "en": "We have entered a new morning and with it all dominion is Allah's. Praise is to Allah. None has the right to be worshipped but Allah alone, Who has no partner.",
+     "localized": "我们已经进入了一个新的早晨，所有的统治权都属于安拉。赞美归于安拉。除了安拉之外，没有人有权被崇拜，安拉没有伙伴。",
+     "count": 1
+    },
+    {
+     "ar": "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ",
+     "tr": "Allahumma bika asbahna, wa bika amsayna, wa bika nahya, wa bika namutu, wa ilaykan-nushur",
+     "en": "O Allah, by You we enter the morning and by You we enter the evening, by You we live and by You we die, and to You is the final return.",
+     "localized": "安拉啊，靠着你，我们进入早晨，靠着你，我们进入黄昏，靠着你，我们生存，靠着你，我们死亡，最后的回归就是你。",
+     "count": 1
+    },
+    {
+     "ar": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ",
+     "tr": "Allahumma anta Rabbi la ilaha illa Ant, khalaqtani wa ana abduk",
+     "en": "O Allah, You are my Lord, none has the right to be worshipped except You. You created me and I am Your servant.",
+     "localized": "安拉啊，你是我的主，除了你之外，没有人有权受崇拜。你创造了我，我是你的仆人。",
+     "count": 1
+    },
+    {
+     "ar": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+     "tr": "Subhanallahi wa bihamdih",
+     "en": "Glory be to Allah and praise Him.",
+     "localized": "荣耀归于真主并赞美他。",
+     "count": 100
+    },
+    {
+     "ar": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ",
+     "tr": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd",
+     "en": "None has the right to be worshipped except Allah, alone, without partner. To Him belongs all sovereignty and praise.",
+     "localized": "除了真主之外，没有人有权利被崇拜，独自一人，没有伴侣。一切主权和赞美都属于他。",
+     "count": 10
+    }
+   ]
+  },
+  {
+   "id": "evening",
+   "title": "أذكار المساء",
+   "titleEn": "Evening Adhkar",
+   "icon": "nights_stay",
+   "items": [
+    {
+     "ar": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ",
+     "tr": "Amsayna wa amsal-mulku lillah, walhamdulillah",
+     "en": "We have entered the evening and with it all dominion is Allah's. Praise is to Allah.",
+     "localized": "我们已经进入了夜晚，所有的统治权都属于真主。赞美归于安拉。",
+     "count": 1
+    },
+    {
+     "ar": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+     "tr": "A'udhu bikalimatillahit-tammati min sharri ma khalaq",
+     "en": "I seek refuge in the perfect words of Allah from the evil of what He has created.",
+     "localized": "我寻求真主完美话语的庇护，远离他所创造的邪恶。",
+     "count": 3
+    },
+    {
+     "ar": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ",
+     "tr": "Bismillahil-ladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama'",
+     "en": "In the Name of Allah, Who with His Name nothing can cause harm, neither in the earth nor in the heavens.",
+     "localized": "以真主之名，无论是在地上还是在天堂，没有任何事物能够以他的名义造成伤害。",
+     "count": 3
+    }
+   ]
+  },
+  {
+   "id": "sleep",
+   "title": "أذكار النوم",
+   "titleEn": "Before Sleep",
+   "icon": "bedtime",
+   "items": [
+    {
+     "ar": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+     "tr": "Bismika Allahumma amutu wa ahya",
+     "en": "In Your Name, O Allah, I die and I live.",
+     "localized": "安拉啊，以你的名义，我死了，我活了。",
+     "count": 1
+    },
+    {
+     "ar": "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ",
+     "tr": "Allahumma qini 'adhabaka yawma tab'athu 'ibadak",
+     "en": "O Allah, save me from Your punishment on the Day You resurrect Your servants.",
+     "localized": "安拉啊，在你复活你的仆人之日，请拯救我免受你的惩罚。",
+     "count": 3
+    },
+    {
+     "ar": "سُبْحَانَ اللَّهِ",
+     "tr": "Subhanallah",
+     "en": "Glory be to Allah.",
+     "localized": "荣耀归于真主。",
+     "count": 33
+    },
+    {
+     "ar": "الْحَمْدُ لِلَّهِ",
+     "tr": "Alhamdulillah",
+     "en": "All praise is due to Allah.",
+     "localized": "所有的赞美都归于安拉。",
+     "count": 33
+    },
+    {
+     "ar": "اللَّهُ أَكْبَرُ",
+     "tr": "Allahu Akbar",
+     "en": "Allah is the Greatest.",
+     "localized": "安拉是最伟大的。",
+     "count": 34
+    }
+   ]
+  },
+  {
+   "id": "waking",
+   "title": "أذكار الاستيقاظ",
+   "titleEn": "Upon Waking",
+   "icon": "wb_twilight",
+   "items": [
+    {
+     "ar": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+     "tr": "Alhamdulillahil-ladhi ahyana ba'da ma amatana wa ilayhin-nushur",
+     "en": "All praise is for Allah Who gave us life after having taken it from us, and unto Him is the resurrection.",
+     "localized": "All praise is for Allah Who gave us life after having taken it from us, and unto Him is the resurrection.",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "prayer",
+   "title": "أذكار بعد الصلاة",
+   "titleEn": "After Prayer",
+   "icon": "mosque",
+   "items": [
+    {
+     "ar": "أَسْتَغْفِرُ اللَّهَ",
+     "tr": "Astaghfirullah",
+     "en": "I seek the forgiveness of Allah.",
+     "localized": "我寻求阿拉的宽恕。",
+     "count": 3
+    },
+    {
+     "ar": "اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
+     "tr": "Allahumma Antas-Salam wa minkas-salam, tabarakta ya Dhal-Jalali wal-Ikram",
+     "en": "O Allah, You are Peace and from You comes peace. Blessed are You, O Owner of majesty and honor.",
+     "localized": "安拉啊，你是和平，和平从你而来。你是有福的，威严和荣誉的拥有者。",
+     "count": 1
+    },
+    {
+     "ar": "سُبْحَانَ اللَّهِ",
+     "tr": "Subhanallah",
+     "en": "Glory be to Allah.",
+     "localized": "荣耀归于真主。",
+     "count": 33
+    },
+    {
+     "ar": "الْحَمْدُ لِلَّهِ",
+     "tr": "Alhamdulillah",
+     "en": "All praise is due to Allah.",
+     "localized": "所有的赞美都归于安拉。",
+     "count": 33
+    },
+    {
+     "ar": "اللَّهُ أَكْبَرُ",
+     "tr": "Allahu Akbar",
+     "en": "Allah is the Greatest.",
+     "localized": "安拉是最伟大的。",
+     "count": 33
+    }
+   ]
+  },
+  {
+   "id": "general_dua",
+   "title": "أدعية عامة",
+   "titleEn": "General Duas",
+   "icon": "volunteer_activism",
+   "items": [
+    {
+     "ar": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+     "tr": "Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina 'adhaban-nar",
+     "en": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.",
+     "localized": "我们的主，赐予我们今世和后世的美好，并保护我们免受火的惩罚。",
+     "count": 1
+    },
+    {
+     "ar": "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي",
+     "tr": "Rabbish-rah li sadri wa yassir li amri",
+     "en": "My Lord, expand for me my breast and ease for me my task.",
+     "localized": "主啊，请为我扩展我的胸怀，并为我减轻我的任务。",
+     "count": 1
+    },
+    {
+     "ar": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى",
+     "tr": "Allahumma inni as'alukal-huda wat-tuqa wal-'afafa wal-ghina",
+     "en": "O Allah, I ask You for guidance, piety, chastity, and freedom from want.",
+     "localized": "安拉啊，我祈求您的指导、虔诚、贞洁和免于匮乏的自由。",
+     "count": 1
+    },
+    {
+     "ar": "رَبِّ زِدْنِي عِلْمًا",
+     "tr": "Rabbi zidni 'ilma",
+     "en": "My Lord, increase me in knowledge.",
+     "localized": "主啊，请增加我的知识。",
+     "count": 1
+    },
+    {
+     "ar": "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
+     "tr": "Hasbunallahu wa ni'mal-wakil",
+     "en": "Allah is sufficient for us, and He is the best Disposer of affairs.",
+     "localized": "安拉对我们来说是足够的，他是最好的处理者。",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "id": "prophet",
+   "title": "الصلاة على النبي",
+   "titleEn": "Salawat on the Prophet",
+   "icon": "favorite",
+   "items": [
+    {
+     "ar": "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ، كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ، إِنَّكَ حَمِيدٌ مَجِيدٌ",
+     "tr": "Allahumma salli 'ala Muhammad wa 'ala ali Muhammad, kama sallayta 'ala Ibrahim wa 'ala ali Ibrahim, innaka Hamidun Majid",
+     "en": "O Allah, send blessings upon Muhammad and upon the family of Muhammad, as You sent blessings upon Ibrahim and upon the family of Ibrahim. Indeed, You are Praiseworthy, Most Glorious.",
+     "localized": "安拉啊，请赐福给穆罕默德和穆罕默德的家族，正如您赐福给易卜拉欣和易卜拉欣的家族一样。确实，您是值得称颂、最荣耀的。",
+     "count": 10
+    }
+   ]
+  },
+  {
+   "id": "forgiveness",
+   "title": "أذكار الاستغفار",
+   "titleEn": "Seeking Forgiveness",
+   "icon": "healing",
+   "items": [
+    {
+     "ar": "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",
+     "tr": "Astaghfirullaha wa atubu ilayh",
+     "en": "I seek the forgiveness of Allah and turn to Him in repentance.",
+     "localized": "我寻求安拉的宽恕，并向他悔改。",
+     "count": 100
+    },
+    {
+     "ar": "رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ، إِنَّكَ أَنْتَ التَّوَّابُ الرَّحِيمُ",
+     "tr": "Rabbigh-fir li wa tub 'alayya, innaka Antat-Tawwabur-Rahim",
+     "en": "My Lord, forgive me and accept my repentance. Indeed, You are the Accepting of repentance, the Merciful.",
+     "localized": "主啊，请原谅我并接受我的悔改。事实上，您是接受悔改的、仁慈的。",
+     "count": 1
+    }
+   ]
+  }
+ ]
+}

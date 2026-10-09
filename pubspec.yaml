@@ -32,6 +32,8 @@ flutter:
     - assets/data/
     - assets/translations/
     - assets/tafsirs/
+    - assets/adhkar/
+    - assets/adhkar/
   fonts:
     - family: Amiri
       fonts:
