@@ -3,7 +3,7 @@ The Holy Quran - free, open-source, and offline.
 FEATURES:
 - Complete Quran (114 surahs) with Uthmani script
 - 10 translations: English, French, Spanish, Russian, Turkish, Urdu, Bengali, Indonesian, Chinese, Swedish
-- Tafsir (commentary) in 3 languages
+- Tafsir in 3 languages
 - Audio recitation by 8 famous reciters
 - Mushaf mode for traditional reading
 - Adhkar & Duas in 10 languages
