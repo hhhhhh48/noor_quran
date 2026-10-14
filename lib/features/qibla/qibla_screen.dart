@@ -41,7 +41,6 @@ class _QiblaScreenState extends State<QiblaScreen> {
     final lat = LocationService.lat ?? 21.4225;
     final lng = LocationService.lng ?? 39.8262;
     final qibla = PrayerService.qiblaDirection(lat, lng);
-    final times = PrayerService.calculate(lat: lat, lng: lng);
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.night : AppColors.cream,
@@ -55,7 +54,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Qibla & Prayer Times',
+          'Qibla Direction',
           style: AppText.poppins(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -74,60 +73,22 @@ class _QiblaScreenState extends State<QiblaScreen> {
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.emerald))
           : SafeArea(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-                children: [
-                  _locationBar(isDark),
-                  const SizedBox(height: 16),
-                  _qiblaCard(isDark, qibla),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Prayer Times',
-                    style: AppText.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color:
-                          isDark ? AppColors.textLight : AppColors.textPrimary,
-                    ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _locationBar(isDark),
+                      const SizedBox(height: 40),
+                      _qiblaCard(isDark, qibla),
+                      if (_failed) ...[
+                        const SizedBox(height: 24),
+                        _errorBox(isDark),
+                      ],
+                    ],
                   ),
-                  const SizedBox(height: 12),
-                  _tile('Fajr', times.fajr, Icons.nightlight_round, isDark),
-                  _tile('Sunrise', times.sunrise, Icons.wb_sunny_outlined, isDark),
-                  _tile('Dhuhr', times.dhuhr, Icons.wb_sunny, isDark),
-                  _tile('Asr', times.asr, Icons.wb_twilight, isDark),
-                  _tile('Maghrib', times.maghrib, Icons.nights_stay, isDark),
-                  _tile('Isha', times.isha, Icons.bedtime, isDark),
-                  const SizedBox(height: 20),
-                  if (_failed)
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                            color: Colors.red.withValues(alpha: 0.3)),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.wifi_off_rounded,
-                              color: Colors.red, size: 20),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Could not detect your location. Using Makkah as default. Turn on internet and tap refresh.',
-                              style: AppText.poppins(
-                                fontSize: 12,
-                                height: 1.5,
-                                color: isDark
-                                    ? AppColors.textLight
-                                    : AppColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+                ),
               ),
             ),
     );
@@ -144,16 +105,42 @@ class _QiblaScreenState extends State<QiblaScreen> {
         border: Border.all(color: AppColors.emerald.withValues(alpha: 0.2)),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.location_on_rounded,
               color: AppColors.emerald, size: 20),
           const SizedBox(width: 10),
+          Text(
+            '$city, $country',
+            style: AppText.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _errorBox(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.wifi_off_rounded, color: Colors.red, size: 20),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
-              '$city, $country',
+              'Could not detect location. Turn on internet and tap refresh.',
               style: AppText.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontSize: 12,
+                height: 1.5,
                 color: isDark ? AppColors.textLight : AppColors.textPrimary,
               ),
             ),
@@ -165,19 +152,20 @@ class _QiblaScreenState extends State<QiblaScreen> {
 
   Widget _qiblaCard(bool isDark, double angle) {
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         gradient: AppGradients.heroEmerald,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: AppColors.emerald.withValues(alpha: 0.3),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            color: AppColors.emerald.withValues(alpha: 0.35),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
           ),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'QIBLA DIRECTION',
@@ -188,10 +176,10 @@ class _QiblaScreenState extends State<QiblaScreen> {
               letterSpacing: 2,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           SizedBox(
-            width: 200,
-            height: 200,
+            width: 260,
+            height: 260,
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -205,34 +193,34 @@ class _QiblaScreenState extends State<QiblaScreen> {
                   ),
                 ),
                 Positioned(
-                  top: 6,
+                  top: 8,
                   child: Text('N',
                       style: AppText.poppins(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: AppColors.goldBright)),
                 ),
                 Positioned(
-                  bottom: 6,
+                  bottom: 8,
                   child: Text('S',
                       style: AppText.poppins(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: AppColors.goldBright)),
                 ),
                 Positioned(
-                  right: 6,
+                  right: 8,
                   child: Text('E',
                       style: AppText.poppins(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: AppColors.goldBright)),
                 ),
                 Positioned(
-                  left: 6,
+                  left: 8,
                   child: Text('W',
                       style: AppText.poppins(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: AppColors.goldBright)),
                 ),
@@ -241,87 +229,38 @@ class _QiblaScreenState extends State<QiblaScreen> {
                   child: const Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
-                      padding: EdgeInsets.only(top: 30),
+                      padding: EdgeInsets.only(top: 40),
                       child: Icon(Icons.navigation_rounded,
-                          color: AppColors.goldBright, size: 36),
+                          color: AppColors.goldBright, size: 50),
                     ),
                   ),
                 ),
                 Container(
-                  width: 30,
-                  height: 30,
+                  width: 44,
+                  height: 44,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: AppGradients.goldShine,
                   ),
                   child: const Icon(Icons.mosque_rounded,
-                      size: 18, color: AppColors.emerald),
+                      size: 26, color: AppColors.emerald),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           Text(
             '${angle.toStringAsFixed(1)}°',
             style: AppText.poppins(
-              fontSize: 32,
+              fontSize: 44,
               fontWeight: FontWeight.bold,
               color: AppColors.goldBright,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
             'from North',
-            style: AppText.poppins(fontSize: 12, color: AppColors.goldSoft),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _tile(String name, DateTime time, IconData icon, bool isDark) {
-    final hh = time.hour.toString().padLeft(2, '0');
-    final mm = time.minute.toString().padLeft(2, '0');
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.nightCard : AppColors.creamCard,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.03),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.emerald.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: AppColors.emerald, size: 20),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              name,
-              style: AppText.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.textLight : AppColors.textPrimary,
-              ),
-            ),
-          ),
-          Text(
-            '$hh:$mm',
-            style: AppText.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.gold,
-            ),
+            style: AppText.poppins(fontSize: 14, color: AppColors.goldSoft),
           ),
         ],
       ),
